@@ -1,0 +1,22 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "lmy",
+      "title": "lmy",
+      "scope": "source.lmy",
+      "file-types": ["lmy"],
+      "injection-regex": "^lmy$",
+      "class-name": "TreeSitterLmy"
+    }
+  ],
+  "metadata": {
+    "version": "0.0.0",
+    "links": {
+      "repository": "https://seriously-why-the-fuck-is-this-required-on-init-!!"
+    }
+  },
+  "bindings": {
+    "rust": true
+  }
+}

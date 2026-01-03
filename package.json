@@ -1,0 +1,8 @@
+{
+  "name": "lmy_tree",
+  "type": "module",
+  "version": "0.0.0",
+  "dependencies": {
+    "tree-sitter-cli": "^0.26.3"
+  }
+}
