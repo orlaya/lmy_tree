@@ -1,4 +1,4 @@
-/// <reference types="tree-sitter-cli/dsl" />
+/// <reference types="./_config/tree-sitter-types.d.ts" />
 // @ts-check
 
 export default grammar({
@@ -22,9 +22,10 @@ export default grammar({
       $.list_item,
     ),
 
-    // ─────────────────────────────────────────────
-    // Structure
-    // ─────────────────────────────────────────────
+    //
+    //
+    //
+    // ────────────────────────────────
 
     // [WORKSPACE]
     section: $ => seq('[', $.identifier, ']'),
@@ -35,9 +36,10 @@ export default grammar({
     // :: (back to section root)
     scope_return: $ => '::',
 
-    // ─────────────────────────────────────────────
-    // Statements
-    // ─────────────────────────────────────────────
+    //
+    //
+    //
+    // ────────────────────────────────
 
     // verify::mauve/config
     verify_statement: $ => seq('verify', '::', $.path),
@@ -66,9 +68,10 @@ export default grammar({
     // // comment text
     comment: $ => seq('//', /.*/),
 
-    // ─────────────────────────────────────────────
-    // Values
-    // ─────────────────────────────────────────────
+    //
+    //
+    //
+    // ────────────────────────────────
 
     _value: $ => choice(
       $.string,
@@ -107,6 +110,9 @@ export default grammar({
     // Identifier - the tricky one
     // ─────────────────────────────────────────────
     //
+    //
+    //
+    // ────────────────────────────────
     // Must handle:
     //   aft:dev     → single identifier (colon between words)
     //   name: value → identifier, then assignment operator, then value
@@ -121,14 +127,14 @@ export default grammar({
     //     [\w@-]*        then more word chars
     //   )*
     //
-    identifier: $ => /[a-zA-Z_][\w@-]*(?::[a-zA-Z_][\w@-]*)*/,
+    identifier: $ => /[a-z_][\w@-]*(?::[a-z_][\w@-]*)*/i,
   },
-});
+})
 
 /**
  * @param {RuleOrLiteral} rule
- * NEEDED FOR TS DO NOT REMOVE
+ * Custom Funtion -- jsdoc needed to appease ts check
  */
 function commaSep(rule) {
-  return optional(seq(rule, repeat(seq(',', rule))));
+  return optional(seq(rule, repeat(seq(',', rule))))
 }

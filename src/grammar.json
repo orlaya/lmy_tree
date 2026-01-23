@@ -294,7 +294,8 @@
     },
     "identifier": {
       "type": "PATTERN",
-      "value": "[a-zA-Z_][\\w@-]*(?::[a-zA-Z_][\\w@-]*)*"
+      "value": "[a-z_][\\w@-]*(?::[a-z_][\\w@-]*)*",
+      "flags": "i"
     }
   },
   "extras": [
