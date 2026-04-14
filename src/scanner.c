@@ -8,6 +8,7 @@ enum TokenType {
   VARIABLE_QUALIFIER,  // namespace segment before dot (sv in $sv.FOO)
   VARIABLE_SEGMENT,    // final identifier segment (FOO in $sv.FOO, or BAR in $BAR)
   VARIABLE_DOT,        // . between segments
+  GLOB,                // * or **
   ERROR_SENTINEL,
 };
 
@@ -85,6 +86,16 @@ bool tree_sitter_lmy_external_scanner_scan(
 
   while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
     lexer->advance(lexer, true);
+  }
+
+  if (valid_symbols[GLOB] && lexer->lookahead == '*') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '*') {
+      lexer->advance(lexer, false);
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = GLOB;
+    return true;
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {

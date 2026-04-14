@@ -12,6 +12,7 @@ export default grammar({
     $.variable_qualifier,
     $.variable_segment,
     $.variable_dot,
+    $.glob,
     $.error_sentinel,
   ],
 
@@ -160,7 +161,7 @@ export default grammar({
       ),
     ),
 
-    glob: $ => /\*\*?/,
+    // glob is external — scanner handles * and ** with priority over raw_value
 
     // Path for imports/verify (allows @ prefix for npm scopes)
     path: $ => /@?[a-zA-Z_][\w\-\/]*/,

@@ -568,10 +568,6 @@
         }
       ]
     },
-    "glob": {
-      "type": "PATTERN",
-      "value": "\\*\\*?"
-    },
     "path": {
       "type": "PATTERN",
       "value": "@?[a-zA-Z_][\\w\\-\\/]*"
@@ -622,6 +618,10 @@
     {
       "type": "SYMBOL",
       "name": "variable_dot"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "glob"
     },
     {
       "type": "SYMBOL",
