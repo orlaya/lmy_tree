@@ -92,10 +92,10 @@
 ;
 ;
 ; ————————————————————————
-; raw_value intentionally unstyled - it's the catch-all
-; identifier as a value (not as a key) gets variable styling
+(raw_value) @string
+
 (assignment
-  value: (identifier) @variable)
+  value: (identifier) @string)
 
 (list_item
-  (identifier) @variable)
+  (identifier) @string)
