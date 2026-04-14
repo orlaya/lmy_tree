@@ -105,6 +105,7 @@ bool tree_sitter_lmy_external_scanner_scan(
     }
     lexer->mark_end(lexer);
 
+    bool found_trailing_colon = false;
     while (lexer->lookahead == ':') {
       lexer->advance(lexer, false);
       if (is_key_start(lexer->lookahead)) {
@@ -114,12 +115,16 @@ bool tree_sitter_lmy_external_scanner_scan(
         }
         lexer->mark_end(lexer);
       } else {
+        found_trailing_colon = true;
         break;
       }
     }
 
-    lexer->result_symbol = KEY;
-    return true;
+    if (found_trailing_colon && lexer->lookahead != ':') {
+      lexer->result_symbol = KEY;
+      return true;
+    }
+    return false;
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {
