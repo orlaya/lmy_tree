@@ -104,7 +104,7 @@ export default grammar({
 
     _line_content: $ => repeat1(choice(
       $.variable,
-      token(prec(-1, /[^$*\/\n\r]+/)),
+      /[^$*\/\n\r]+/,
       /\/[^\/\n\r]/,
       '$',
       '*',
@@ -130,7 +130,7 @@ export default grammar({
 
     raw_value: $ => prec(-1, repeat1(choice(
       $.variable,
-      token(prec(-1, /[^$*\/\n\r]+/)),
+      /[^$*\/\n\r]+/,
       /\/[^\/\n\r]/,
       '$',
       '*',
@@ -150,15 +150,10 @@ export default grammar({
 
     // /Users/sarah/whatever or _CONFIG/**/*.ts or **/*.tsignore/**
     path_value: $ => choice(
-      // Text-leading with slashes: _CONFIG/foo.yaml, _CONFIG/**/*.ts
+      // Text-leading: _CONFIG/foo.yaml, _CONFIG/**/*.ts
       seq(
         /\/?[a-zA-Z_][\w\-\/.]*/,
         repeat(seq($.glob, optional(/[\w\-\/.]+/))),
-      ),
-      // Text-leading without slashes: somthing*/**.ts (identifier then globs)
-      seq(
-        $.identifier,
-        repeat1(seq($.glob, optional(/[\w\-\/.]+/))),
       ),
       // Glob-leading: **/*.tsignore/**, *path*/path/**/*.ts
       seq(
