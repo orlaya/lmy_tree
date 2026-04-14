@@ -288,10 +288,6 @@
           }
         },
         {
-          "type": "PATTERN",
-          "value": "\\r?\\n"
-        },
-        {
           "type": "SYMBOL",
           "name": "fold_close"
         }
@@ -327,10 +323,6 @@
               }
             ]
           }
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\r?\\n"
         },
         {
           "type": "SYMBOL",

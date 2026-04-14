@@ -86,14 +86,12 @@ export default grammar({
     multiline_fold: $ => seq(
       $.fold_open,
       repeat(seq(/\r?\n/, optional(/([^\/\n\r]+|\/[^\/\n\r])*/))),
-      /\r?\n/,
       $.fold_close,
     ),
 
     multiline_preserve: $ => seq(
       $.preserve_delimiter,
       repeat(seq(/\r?\n/, optional(/([^\/\n\r]+|\/[^\/\n\r])*/))),
-      /\r?\n/,
       $.preserve_delimiter,
     ),
 
