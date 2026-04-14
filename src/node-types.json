@@ -22,10 +22,6 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "multiline_fold",
             "named": true
           },
@@ -93,10 +89,6 @@
       "types": [
         {
           "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "identifier",
           "named": true
         },
         {

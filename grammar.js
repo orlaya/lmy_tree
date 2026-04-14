@@ -126,7 +126,6 @@ export default grammar({
       $.boolean,
       $.version,
       $.number,
-      $.identifier,
       $.raw_value,
     ),
 

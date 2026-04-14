@@ -123,9 +123,3 @@
 ;
 ; ————————————————————————
 (raw_value) @string
-
-(assignment
-  value: (identifier) @string)
-
-(list_item
-  (identifier) @string)
