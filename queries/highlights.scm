@@ -80,6 +80,13 @@
 
 ;
 ;
+; Variables
+; ————————————————————————
+(variable) @variable
+
+
+;
+;
 ; Values
 ; ————————————————————————
 (string) @string

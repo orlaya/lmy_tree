@@ -395,12 +395,36 @@
         }
       ]
     },
+    "variable": {
+      "type": "PATTERN",
+      "value": "\\$[a-zA-Z_][\\w]*(?:\\.[a-zA-Z_][\\w]*)*"
+    },
     "raw_value": {
       "type": "PREC",
       "value": -1,
       "content": {
-        "type": "PATTERN",
-        "value": "([^\\/\\n\\r]+|\\/[^\\/\\n\\r])*"
+        "type": "REPEAT1",
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "variable"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[^$\\/\\n\\r]+"
+            },
+            {
+              "type": "PATTERN",
+              "value": "\\/[^\\/\\n\\r]"
+            },
+            {
+              "type": "STRING",
+              "value": "$"
+            }
+          ]
+        }
       }
     },
     "string": {

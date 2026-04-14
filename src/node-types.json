@@ -171,7 +171,17 @@
   {
     "type": "raw_value",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "scope_entry",
@@ -265,6 +275,10 @@
     }
   },
   {
+    "type": "$",
+    "named": false
+  },
+  {
     "type": ",",
     "named": false
   },
@@ -339,6 +353,10 @@
   {
     "type": "true",
     "named": false
+  },
+  {
+    "type": "variable",
+    "named": true
   },
   {
     "type": "verify",

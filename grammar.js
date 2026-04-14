@@ -108,7 +108,14 @@ export default grammar({
       $.raw_value,
     ),
 
-    raw_value: $ => prec(-1, /([^\/\n\r]+|\/[^\/\n\r])*/),
+    variable: $ => /\$[a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)*/,
+
+    raw_value: $ => prec(-1, repeat1(choice(
+      $.variable,
+      /[^$\/\n\r]+/,
+      /\/[^\/\n\r]/,
+      '$',
+    ))),
 
     // "quoted string"
     string: $ => /"[^"]*"/,
