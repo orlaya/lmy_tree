@@ -145,10 +145,17 @@ export default grammar({
     // 3001
     number: $ => /\d+/,
 
-    // /Users/sarah/whatever or _CONFIG/**/*.ts (paths with slashes, optional globs)
-    path_value: $ => seq(
-      /\/?[a-zA-Z_][\w\-\/.]*/,
-      repeat(seq($.glob, optional(/[\w\-\/.]+/))),
+    // /Users/sarah/whatever or _CONFIG/**/*.ts or **/*.tsignore/**
+    path_value: $ => choice(
+      seq(
+        /\/?[a-zA-Z_][\w\-\/.]*/,
+        repeat(seq($.glob, optional(/[\w\-\/.]+/))),
+      ),
+      seq(
+        $.glob,
+        /[\w\-\/.]+/,
+        repeat(seq($.glob, optional(/[\w\-\/.]+/))),
+      ),
     ),
 
     glob: $ => /\*\*?/,

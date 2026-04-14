@@ -502,35 +502,77 @@
       "value": "\\d+"
     },
     "path_value": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\/?[a-zA-Z_][\\w\\-\\/.]*"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "glob"
-              },
-              {
-                "type": "CHOICE",
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "\\/?[a-zA-Z_][\\w\\-\\/.]*"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
                 "members": [
                   {
-                    "type": "PATTERN",
-                    "value": "[\\w\\-\\/.]+"
+                    "type": "SYMBOL",
+                    "name": "glob"
                   },
                   {
-                    "type": "BLANK"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[\\w\\-\\/.]+"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
                   }
                 ]
               }
-            ]
-          }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "glob"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[\\w\\-\\/.]+"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "glob"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[\\w\\-\\/.]+"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
         }
       ]
     },
