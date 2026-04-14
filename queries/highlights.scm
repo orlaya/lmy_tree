@@ -93,13 +93,11 @@
 ;
 ; Multiline blocks
 ; ————————————————————————
-(multiline_fold
-  "<<" @operator
-  ">>" @operator)
+(fold_open) @operator
+(fold_close) @operator
 (multiline_fold) @string
 
-(multiline_preserve
-  "||" @operator)
+(preserve_delimiter) @operator
 (multiline_preserve) @string
 
 

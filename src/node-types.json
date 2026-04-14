@@ -137,12 +137,36 @@
   {
     "type": "multiline_fold",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "fold_close",
+          "named": true
+        },
+        {
+          "type": "fold_open",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "multiline_preserve",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preserve_delimiter",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "raw_value",
@@ -261,14 +285,6 @@
     "named": false
   },
   {
-    "type": "<<",
-    "named": false
-  },
-  {
-    "type": ">>",
-    "named": false
-  },
-  {
     "type": "[",
     "named": false
   },
@@ -283,6 +299,14 @@
   {
     "type": "false",
     "named": false
+  },
+  {
+    "type": "fold_close",
+    "named": true
+  },
+  {
+    "type": "fold_open",
+    "named": true
   },
   {
     "type": "identifier",
@@ -305,6 +329,10 @@
     "named": true
   },
   {
+    "type": "preserve_delimiter",
+    "named": true
+  },
+  {
     "type": "string",
     "named": true
   },
@@ -322,10 +350,6 @@
   },
   {
     "type": "{",
-    "named": false
-  },
-  {
-    "type": "||",
     "named": false
   },
   {
