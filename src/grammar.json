@@ -544,7 +544,7 @@
     },
     "version": {
       "type": "PATTERN",
-      "value": "\\d+(?:\\.\\d+)+"
+      "value": "[~^]?\\d+(?:\\.\\d+)+(?:-[\\w.]+)*"
     },
     "number": {
       "type": "PATTERN",

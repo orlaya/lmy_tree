@@ -150,8 +150,8 @@ export default grammar({
     // true / false
     boolean: $ => choice('true', 'false'),
 
-    // 0.0.0 or 1.2.3.4 (digits with dots, at least one dot)
-    version: $ => /\d+(?:\.\d+)+/,
+    // 1.0.0, ^1.1.0, ~2.3.0, 1.0.0-beta.1-f92627f
+    version: $ => /[~^]?\d+(?:\.\d+)+(?:-[\w.]+)*/,
 
     // 3001
     number: $ => /\d+/,
