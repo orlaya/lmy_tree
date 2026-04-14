@@ -368,8 +368,8 @@
             "value": "[^$*\\/\\n\\r]+"
           },
           {
-            "type": "PATTERN",
-            "value": "\\/[^\\/\\n\\r]"
+            "type": "STRING",
+            "value": "/"
           },
           {
             "type": "STRING",
@@ -465,8 +465,8 @@
               "value": "[^$*\\/\\n\\r]+"
             },
             {
-              "type": "PATTERN",
-              "value": "\\/[^\\/\\n\\r]"
+              "type": "STRING",
+              "value": "/"
             },
             {
               "type": "STRING",

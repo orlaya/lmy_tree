@@ -104,7 +104,7 @@ export default grammar({
     _line_content: $ => repeat1(choice(
       $.variable,
       /[^$*\/\n\r]+/,
-      /\/[^\/\n\r]/,
+      '/',
       '$',
       '*',
     )),
@@ -129,7 +129,7 @@ export default grammar({
     raw_value: $ => prec(-1, repeat1(choice(
       $.variable,
       /[^$*\/\n\r]+/,
-      /\/[^\/\n\r]/,
+      '/',
       '$',
       '*',
     ))),
