@@ -22,7 +22,7 @@ export default grammar({
   ],
 
   rules: {
-    source_file: $ => repeat(choice($._definition, /\r?\n/)),
+    source_file: $ => repeat(choice($._definition, '}', /\r?\n/)),
 
     _definition: $ => choice(
       $.section,

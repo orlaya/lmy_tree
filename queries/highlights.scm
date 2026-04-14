@@ -44,6 +44,8 @@
 ; :: (returning to root)
 (scope_return) @operator
 
+"}" @punctuation.bracket
+
 
 ;
 ;

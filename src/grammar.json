@@ -12,6 +12,10 @@
             "name": "_definition"
           },
           {
+            "type": "STRING",
+            "value": "}"
+          },
+          {
             "type": "PATTERN",
             "value": "\\r?\\n"
           }
