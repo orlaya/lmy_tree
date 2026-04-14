@@ -75,7 +75,7 @@
 
 ; -- coreWorkspace
 (list_item
-  "-" @punctuation.list_marker)
+  "--" @punctuation.list_marker)
 
 
 ;
