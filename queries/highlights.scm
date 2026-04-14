@@ -103,7 +103,7 @@
 ; ————————————————————————
 (string) @string
 (boolean) @boolean
-(version) @number
+(version) @boolean
 (number) @number
 "*" @punctuation.special
 
