@@ -10,6 +10,10 @@
           {
             "type": "key",
             "named": true
+          },
+          {
+            "type": "string",
+            "named": true
           }
         ]
       },
@@ -352,6 +356,11 @@
     }
   },
   {
+    "type": "version",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "$",
     "named": false
   },
@@ -458,10 +467,6 @@
   {
     "type": "verify",
     "named": false
-  },
-  {
-    "type": "version",
-    "named": true
   },
   {
     "type": "{",

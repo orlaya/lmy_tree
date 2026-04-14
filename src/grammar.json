@@ -252,8 +252,17 @@
             "type": "FIELD",
             "name": "key",
             "content": {
-              "type": "SYMBOL",
-              "name": "key"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "key"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "string"
+                }
+              ]
             }
           },
           {
@@ -543,8 +552,12 @@
       ]
     },
     "version": {
-      "type": "PATTERN",
-      "value": "[~^]?\\d+(?:\\.\\d+)+(?:-[\\w.]+)*"
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "PATTERN",
+        "value": "[~^]?\\d+(?:\\.\\d+)+(?:-[\\w.]+)*"
+      }
     },
     "number": {
       "type": "PATTERN",
