@@ -264,6 +264,18 @@
           "name": "fold_open"
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "([^\\/\\n\\r]+|\\/[^\\/\\n\\r])*"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "REPEAT",
           "content": {
             "type": "SEQ",
@@ -299,6 +311,18 @@
         {
           "type": "SYMBOL",
           "name": "preserve_delimiter"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "([^\\/\\n\\r]+|\\/[^\\/\\n\\r])*"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "REPEAT",
