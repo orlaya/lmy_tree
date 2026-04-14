@@ -138,15 +138,6 @@ bool tree_sitter_lmy_external_scanner_scan(
     return true;
   }
 
-  if (valid_symbols[VERSION_DIGITS] && is_digit(lexer->lookahead)) {
-    while (is_digit(lexer->lookahead)) {
-      lexer->advance(lexer, false);
-    }
-    lexer->mark_end(lexer);
-    lexer->result_symbol = VERSION_DIGITS;
-    return true;
-  }
-
   // ── Whitespace skip for remaining tokens ──
 
   if (lexer->eof(lexer)) return false;
@@ -215,6 +206,15 @@ bool tree_sitter_lmy_external_scanner_scan(
       return true;
     }
     return false;
+  }
+
+  if (valid_symbols[VERSION_DIGITS] && is_digit(lexer->lookahead)) {
+    while (is_digit(lexer->lookahead)) {
+      lexer->advance(lexer, false);
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = VERSION_DIGITS;
+    return true;
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {
