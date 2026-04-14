@@ -149,7 +149,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
@@ -240,6 +240,10 @@
   },
   {
     "type": "]",
+    "named": false
+  },
+  {
+    "type": "aka",
     "named": false
   },
   {

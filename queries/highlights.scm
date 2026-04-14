@@ -10,6 +10,7 @@
 ; ————————————————————————
 "verify" @keyword
 "import" @keyword
+"aka" @keyword
 
 
 ;

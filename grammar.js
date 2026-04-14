@@ -27,8 +27,11 @@ export default grammar({
     //
     // ────────────────────────────────
 
-    // [WORKSPACE]
-    section: $ => seq('[', $.identifier, ']'),
+    // [WORKSPACE] or [SCRIPT_VARIABLES] aka [sv]
+    section: $ => seq(
+      '[', $.identifier, ']',
+      optional(seq('aka', '[', $.identifier, ']')),
+    ),
 
     // server:: (entering nested scope)
     scope_entry: $ => seq(field('name', $.identifier), '::'),
