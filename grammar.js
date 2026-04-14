@@ -180,7 +180,7 @@ export default grammar({
     //     [\w@-]*        then more word chars
     //   )*
     //
-    identifier: $ => /[a-z_][\w@-]*(?::[a-z_][\w@-]*)*/i,
+    identifier: $ => /[a-z_#][\w@#\/.-]*(?::[a-z_#][\w@#\/.-]*)*/i,
   },
 })
 
