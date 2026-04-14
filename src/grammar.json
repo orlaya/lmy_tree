@@ -267,8 +267,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "PATTERN",
-              "value": "([^\\/\\n\\r]+|\\/[^\\/\\n\\r])*"
+              "type": "SYMBOL",
+              "name": "_line_content"
             },
             {
               "type": "BLANK"
@@ -288,8 +288,8 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "PATTERN",
-                    "value": "([^\\/\\n\\r]+|\\/[^\\/\\n\\r])*"
+                    "type": "SYMBOL",
+                    "name": "_line_content"
                   },
                   {
                     "type": "BLANK"
@@ -316,8 +316,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "PATTERN",
-              "value": "([^\\/\\n\\r]+|\\/[^\\/\\n\\r])*"
+              "type": "SYMBOL",
+              "name": "_line_content"
             },
             {
               "type": "BLANK"
@@ -337,8 +337,8 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "PATTERN",
-                    "value": "([^\\/\\n\\r]+|\\/[^\\/\\n\\r])*"
+                    "type": "SYMBOL",
+                    "name": "_line_content"
                   },
                   {
                     "type": "BLANK"
@@ -353,6 +353,30 @@
           "name": "preserve_delimiter"
         }
       ]
+    },
+    "_line_content": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "variable"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^$\\/\\n\\r]+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\/[^\\/\\n\\r]"
+          },
+          {
+            "type": "STRING",
+            "value": "$"
+          }
+        ]
+      }
     },
     "_value": {
       "type": "CHOICE",

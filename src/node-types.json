@@ -149,6 +149,10 @@
         {
           "type": "fold_open",
           "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
         }
       ]
     }
@@ -163,6 +167,10 @@
       "types": [
         {
           "type": "preserve_delimiter",
+          "named": true
+        },
+        {
+          "type": "variable",
           "named": true
         }
       ]
