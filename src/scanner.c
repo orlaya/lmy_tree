@@ -95,11 +95,14 @@ bool tree_sitter_lmy_external_scanner_scan(
 
   // ── Whitespace skip for remaining tokens ──
 
+  if (lexer->eof(lexer)) return false;
+  uint32_t column_before_skip = lexer->get_column(lexer);
+
   while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
     lexer->advance(lexer, true);
   }
 
-  if (valid_symbols[KEY] && is_key_start(lexer->lookahead)) {
+  if (valid_symbols[KEY] && column_before_skip == 0 && is_key_start(lexer->lookahead)) {
     lexer->advance(lexer, false);
     while (is_key_char(lexer->lookahead)) {
       lexer->advance(lexer, false);
