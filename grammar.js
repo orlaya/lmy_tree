@@ -78,14 +78,14 @@ export default grammar({
 
     multiline_fold: $ => seq(
       '<<',
-      repeat(seq(/\r?\n/, optional(/([^\/\n\r]|\/[^\/\n\r])*\/?/))),
+      repeat(seq(/\r?\n/, optional(/([^\/\n\r]+|\/[^\/\n\r])*/))),
       /\r?\n/,
       '>>',
     ),
 
     multiline_preserve: $ => seq(
       '||',
-      repeat(seq(/\r?\n/, optional(/([^\/\n\r]|\/[^\/\n\r])*\/?/))),
+      repeat(seq(/\r?\n/, optional(/([^\/\n\r]+|\/[^\/\n\r])*/))),
       /\r?\n/,
       '||',
     ),
@@ -102,7 +102,7 @@ export default grammar({
       $.raw_value,
     ),
 
-    raw_value: $ => prec(-1, /([^\/\n\r]|\/[^\/\n\r])*\/?/),
+    raw_value: $ => prec(-1, /([^\/\n\r]+|\/[^\/\n\r])*/),
 
     // "quoted string"
     string: $ => /"[^"]*"/,
