@@ -14,6 +14,7 @@ enum TokenType {
   VERSION_DOT,         // . between digit groups
   VERSION_DASH,        // - before pre-release tag
   VERSION_TAG,         // pre-release tag (beta, f92627f, etc)
+  NUMBER,              // 34 or 45.70
   ERROR_SENTINEL,
 };
 
@@ -208,26 +209,50 @@ bool tree_sitter_lmy_external_scanner_scan(
     return false;
   }
 
-  if (valid_symbols[VERSION_DIGITS] && is_digit(lexer->lookahead)) {
+  if ((valid_symbols[VERSION_DIGITS] || valid_symbols[NUMBER]) && is_digit(lexer->lookahead)) {
     while (is_digit(lexer->lookahead)) {
       lexer->advance(lexer, false);
     }
     lexer->mark_end(lexer);
 
-    // At value start (VERSION_PREFIX still valid): peek ahead to confirm
-    // this is actually a version (needs at least two .digit groups),
-    // otherwise let the number regex handle it
+    // At value start (VERSION_PREFIX still valid): peek ahead to decide
+    // version vs number
     if (valid_symbols[VERSION_PREFIX]) {
-      // Need: .digits.digits
-      if (lexer->lookahead != '.') return false;
-      lexer->advance(lexer, false);
-      if (!is_digit(lexer->lookahead)) return false;
-      while (is_digit(lexer->lookahead)) lexer->advance(lexer, false);
-      if (lexer->lookahead != '.') return false;
+      if (lexer->lookahead == '.') {
+        lexer->advance(lexer, false);
+        if (is_digit(lexer->lookahead)) {
+          while (is_digit(lexer->lookahead)) lexer->advance(lexer, false);
+          if (lexer->lookahead == '.') {
+            // Two dots confirmed — this is a version
+            if (valid_symbols[VERSION_DIGITS]) {
+              lexer->result_symbol = VERSION_DIGITS;
+              return true;
+            }
+          }
+          // One dot only — this is a decimal number (45.70)
+          // mark_end to include the .digits we just consumed
+          lexer->mark_end(lexer);
+        }
+        // Dot not followed by digit — mark_end stays at initial digits
+      }
+
+      if (valid_symbols[NUMBER]) {
+        lexer->result_symbol = NUMBER;
+        return true;
+      }
+      return false;
     }
 
-    lexer->result_symbol = VERSION_DIGITS;
-    return true;
+    // Inside a version (VERSION_PREFIX not valid) — emit version digits
+    if (valid_symbols[VERSION_DIGITS]) {
+      lexer->result_symbol = VERSION_DIGITS;
+      return true;
+    }
+
+    if (valid_symbols[NUMBER]) {
+      lexer->result_symbol = NUMBER;
+      return true;
+    }
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {

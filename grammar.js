@@ -18,6 +18,7 @@ export default grammar({
     $.version_dot,
     $.version_dash,
     $.version_tag,
+    $.number,
     $.error_sentinel,
   ],
 
@@ -168,9 +169,6 @@ export default grammar({
         repeat(seq($.version_dot, choice($.version_digits, $.version_tag))),
       )),
     ),
-
-    // 3001 or 3.14
-    number: $ => /\d+(\.\d+)?/,
 
     // Path for imports/verify (allows @ prefix for npm scopes)
     path: $ => /@?[a-zA-Z_][\w\-\/]*/,

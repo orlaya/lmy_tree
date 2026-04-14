@@ -628,10 +628,6 @@
         }
       ]
     },
-    "number": {
-      "type": "PATTERN",
-      "value": "\\d+(\\.\\d+)?"
-    },
     "path": {
       "type": "PATTERN",
       "value": "@?[a-zA-Z_][\\w\\-\\/]*"
@@ -706,6 +702,10 @@
     {
       "type": "SYMBOL",
       "name": "version_tag"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "number"
     },
     {
       "type": "SYMBOL",
