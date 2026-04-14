@@ -53,7 +53,7 @@
   (path) @string.special
   "::" @operator
   "{" @punctuation.bracket
-  (identifier) @type
+  (identifier) @property
   "}" @punctuation.bracket)
 
 
