@@ -502,8 +502,41 @@
       "value": "\\d+"
     },
     "path_value": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "\\/?[a-zA-Z_][\\w\\-\\/.]*"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "glob"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[\\w\\-\\/.]+"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "glob": {
       "type": "PATTERN",
-      "value": "\\/?[a-zA-Z_][\\w\\-\\/.]*"
+      "value": "\\*\\*?"
     },
     "path": {
       "type": "PATTERN",

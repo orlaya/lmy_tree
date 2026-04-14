@@ -97,6 +97,7 @@
 (version) @number
 (number) @number
 (path_value) @string.special
+(glob) @punctuation.special
 
 
 ;

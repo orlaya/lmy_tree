@@ -177,6 +177,21 @@
     }
   },
   {
+    "type": "path_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "glob",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "raw_value",
     "named": true,
     "fields": {},
@@ -358,6 +373,10 @@
     "named": true
   },
   {
+    "type": "glob",
+    "named": true
+  },
+  {
     "type": "identifier",
     "named": true
   },
@@ -371,10 +390,6 @@
   },
   {
     "type": "path",
-    "named": true
-  },
-  {
-    "type": "path_value",
     "named": true
   },
   {

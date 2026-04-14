@@ -145,8 +145,13 @@ export default grammar({
     // 3001
     number: $ => /\d+/,
 
-    // /Users/sarah/whatever or mauve/config (paths with slashes)
-    path_value: $ => /\/?[a-zA-Z_][\w\-\/.]*/,
+    // /Users/sarah/whatever or _CONFIG/**/*.ts (paths with slashes, optional globs)
+    path_value: $ => seq(
+      /\/?[a-zA-Z_][\w\-\/.]*/,
+      repeat(seq($.glob, optional(/[\w\-\/.]+/))),
+    ),
+
+    glob: $ => /\*\*?/,
 
     // Path for imports/verify (allows @ prefix for npm scopes)
     path: $ => /@?[a-zA-Z_][\w\-\/]*/,
