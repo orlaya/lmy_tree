@@ -559,7 +559,11 @@
                   },
                   {
                     "type": "PATTERN",
-                    "value": "[\\w\\-\\/.]+"
+                    "value": "[^*\\/\\n\\r]+"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "/"
                   }
                 ]
               }

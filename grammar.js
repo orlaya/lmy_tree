@@ -156,12 +156,11 @@ export default grammar({
         $.glob, '/',
         repeat1(choice(
           $.glob,
-          /[\w\-\/.]+/,
+          /[^*\/\n\r]+/,
+          '/',
         )),
       ),
     ),
-
-    // glob is external — scanner handles * and ** with priority over raw_value
 
     // Path for imports/verify (allows @ prefix for npm scopes)
     path: $ => /@?[a-zA-Z_][\w\-\/]*/,
