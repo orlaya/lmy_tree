@@ -94,11 +94,9 @@ bool tree_sitter_lmy_external_scanner_scan(
       lexer->advance(lexer, false);
     }
     lexer->mark_end(lexer);
-    // Only emit GLOB when immediately followed by path-relevant char
-    // (not whitespace/newline/EOF) — so `* text` stays as raw_value
-    if (lexer->lookahead != ' ' && lexer->lookahead != '\t' &&
-        lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
-        !lexer->eof(lexer)) {
+    // Only emit GLOB when NOT followed by a space/tab
+    // so `* text` stays as raw_value, but `*\n` and `*` at EOF are valid globs
+    if (lexer->lookahead != ' ' && lexer->lookahead != '\t') {
       lexer->result_symbol = GLOB;
       return true;
     }
