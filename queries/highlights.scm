@@ -83,8 +83,9 @@
 ; Variables
 ; ————————————————————————
 (variable_dollar) @punctuation.special
-(variable_segment) @variable
+(variable_qualifier) @type
 (variable_dot) @punctuation.delimiter
+(variable_segment) @variable
 
 
 ;

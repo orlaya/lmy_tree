@@ -9,6 +9,7 @@ export default grammar({
     $.fold_close,
     $.preserve_delimiter,
     $.variable_dollar,
+    $.variable_qualifier,
     $.variable_segment,
     $.variable_dot,
     $.error_sentinel,
@@ -121,8 +122,8 @@ export default grammar({
 
     variable: $ => seq(
       $.variable_dollar,
+      repeat(seq($.variable_qualifier, $.variable_dot)),
       $.variable_segment,
-      repeat(seq($.variable_dot, $.variable_segment)),
     ),
 
     raw_value: $ => prec(-1, repeat1(choice(

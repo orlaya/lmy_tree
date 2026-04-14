@@ -5,7 +5,8 @@ enum TokenType {
   FOLD_CLOSE,          // >>
   PRESERVE_DELIMITER,  // ||
   VARIABLE_DOLLAR,     // $
-  VARIABLE_SEGMENT,    // identifier segment (sv, BUILD_EVERYTHING, gist:check)
+  VARIABLE_QUALIFIER,  // namespace segment before dot (sv in $sv.FOO)
+  VARIABLE_SEGMENT,    // final identifier segment (FOO in $sv.FOO, or BAR in $BAR)
   VARIABLE_DOT,        // . between segments
   ERROR_SENTINEL,
 };
@@ -43,7 +44,8 @@ bool tree_sitter_lmy_external_scanner_scan(
     return false;
   }
 
-  if (valid_symbols[VARIABLE_SEGMENT] && is_segment_start(lexer->lookahead)) {
+  if ((valid_symbols[VARIABLE_SEGMENT] || valid_symbols[VARIABLE_QUALIFIER]) &&
+      is_segment_start(lexer->lookahead)) {
     lexer->advance(lexer, false);
     while (is_segment_char(lexer->lookahead)) {
       lexer->advance(lexer, false);
@@ -61,8 +63,17 @@ bool tree_sitter_lmy_external_scanner_scan(
         }
         lexer->mark_end(lexer);
       } else {
-        // Assignment colon — token ends before it (previous mark_end)
         break;
+      }
+    }
+
+    // Peek ahead: if `.` + segment_start follows, this is a qualifier (namespace),
+    // not the final segment
+    if (valid_symbols[VARIABLE_QUALIFIER] && lexer->lookahead == '.') {
+      lexer->advance(lexer, false);
+      if (is_segment_start(lexer->lookahead)) {
+        lexer->result_symbol = VARIABLE_QUALIFIER;
+        return true;
       }
     }
 

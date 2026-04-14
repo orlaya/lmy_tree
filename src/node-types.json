@@ -284,6 +284,10 @@
           "named": true
         },
         {
+          "type": "variable_qualifier",
+          "named": true
+        },
+        {
           "type": "variable_segment",
           "named": true
         }
@@ -391,6 +395,10 @@
   },
   {
     "type": "variable_dot",
+    "named": true
+  },
+  {
+    "type": "variable_qualifier",
     "named": true
   },
   {
