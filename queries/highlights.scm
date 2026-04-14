@@ -83,6 +83,8 @@
 ; Variables
 ; ————————————————————————
 (variable) @variable
+(variable "$" @punctuation.special)
+(variable "." @punctuation.delimiter)
 
 
 ;

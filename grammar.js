@@ -115,7 +115,14 @@ export default grammar({
       $.raw_value,
     ),
 
-    variable: $ => /\$[a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)*/,
+    variable: $ => seq(
+      '$',
+      token.immediate(/[a-zA-Z_][\w@-]*(?::[a-zA-Z_][\w@-]*)*/),
+      repeat(seq(
+        token.immediate('.'),
+        token.immediate(/[a-zA-Z_][\w@-]*(?::[a-zA-Z_][\w@-]*)*/),
+      )),
+    ),
 
     raw_value: $ => prec(-1, repeat1(choice(
       $.variable,
