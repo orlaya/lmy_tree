@@ -91,6 +91,15 @@
 
 ;
 ;
+; Multiline markers
+; ————————————————————————
+(multiline_open) @operator
+(multiline_close) @operator
+(text_line) @string
+
+
+;
+;
 ;
 ; ————————————————————————
 (raw_value) @string

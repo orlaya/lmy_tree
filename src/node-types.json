@@ -26,6 +26,10 @@
             "named": true
           },
           {
+            "type": "multiline_open",
+            "named": true
+          },
+          {
             "type": "number",
             "named": true
           },
@@ -96,6 +100,10 @@
           "named": true
         },
         {
+          "type": "multiline_open",
+          "named": true
+        },
+        {
           "type": "number",
           "named": true
         },
@@ -117,6 +125,16 @@
         }
       ]
     }
+  },
+  {
+    "type": "multiline_close",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "multiline_open",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "raw_value",
@@ -181,6 +199,10 @@
           "named": true
         },
         {
+          "type": "multiline_close",
+          "named": true
+        },
+        {
           "type": "scope_entry",
           "named": true
         },
@@ -193,11 +215,20 @@
           "named": true
         },
         {
+          "type": "text_line",
+          "named": true
+        },
+        {
           "type": "verify_statement",
           "named": true
         }
       ]
     }
+  },
+  {
+    "type": "text_line",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "verify_statement",
@@ -232,6 +263,14 @@
   },
   {
     "type": "::",
+    "named": false
+  },
+  {
+    "type": "<<",
+    "named": false
+  },
+  {
+    "type": ">>",
     "named": false
   },
   {
@@ -288,6 +327,10 @@
   },
   {
     "type": "{",
+    "named": false
+  },
+  {
+    "type": "||",
     "named": false
   },
   {

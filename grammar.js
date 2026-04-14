@@ -20,6 +20,8 @@ export default grammar({
       $.scope_return,
       $.assignment,
       $.list_item,
+      $.multiline_close,
+      $.text_line,
     ),
 
     //
@@ -76,7 +78,14 @@ export default grammar({
     //
     // ────────────────────────────────
 
+    multiline_open: $ => choice('<<', '||'),
+
+    multiline_close: $ => choice('>>', '||'),
+
+    text_line: $ => prec(-2, /[^\n\r]+/),
+
     _value: $ => choice(
+      $.multiline_open,
       $.string,
       $.boolean,
       $.version,
@@ -86,9 +95,6 @@ export default grammar({
       $.raw_value,
     ),
 
-    // Catch-all: anything else up to end of line
-    // This handles shell commands, expressions with parentheses, etc.
-    // Low precedence so other value types match first
     raw_value: $ => prec(-1, /[^\n\r]+/),
 
     // "quoted string"
