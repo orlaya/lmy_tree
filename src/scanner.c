@@ -4,7 +4,20 @@ enum TokenType {
   FOLD_OPEN,           // <<
   FOLD_CLOSE,          // >>
   PRESERVE_DELIMITER,  // ||
+  VARIABLE_DOLLAR,     // $
+  VARIABLE_SEGMENT,    // identifier segment (sv, BUILD_EVERYTHING, gist:check)
+  VARIABLE_DOT,        // . between segments
+  ERROR_SENTINEL,
 };
+
+static bool is_segment_start(int32_t c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
+
+static bool is_segment_char(int32_t c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+         (c >= '0' && c <= '9') || c == '_' || c == '@' || c == '-';
+}
 
 void *tree_sitter_lmy_external_scanner_create() { return NULL; }
 void tree_sitter_lmy_external_scanner_destroy(void *payload) {}
@@ -16,8 +29,61 @@ bool tree_sitter_lmy_external_scanner_scan(
   TSLexer *lexer,
   const bool *valid_symbols
 ) {
+  if (valid_symbols[ERROR_SENTINEL]) return false;
+
+  // ── Variable internals: no whitespace skip (must be adjacent) ──
+
+  if (valid_symbols[VARIABLE_DOT] && lexer->lookahead == '.') {
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    if (is_segment_start(lexer->lookahead)) {
+      lexer->result_symbol = VARIABLE_DOT;
+      return true;
+    }
+    return false;
+  }
+
+  if (valid_symbols[VARIABLE_SEGMENT] && is_segment_start(lexer->lookahead)) {
+    lexer->advance(lexer, false);
+    while (is_segment_char(lexer->lookahead)) {
+      lexer->advance(lexer, false);
+    }
+    lexer->mark_end(lexer);
+
+    // Colon-separated parts (gist:check) — colon is part of segment
+    // only if followed by another identifier start
+    while (lexer->lookahead == ':') {
+      lexer->advance(lexer, false);
+      if (is_segment_start(lexer->lookahead)) {
+        lexer->advance(lexer, false);
+        while (is_segment_char(lexer->lookahead)) {
+          lexer->advance(lexer, false);
+        }
+        lexer->mark_end(lexer);
+      } else {
+        // Assignment colon — token ends before it (previous mark_end)
+        break;
+      }
+    }
+
+    lexer->result_symbol = VARIABLE_SEGMENT;
+    return true;
+  }
+
+  // ── Whitespace skip for remaining tokens ──
+
   while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
     lexer->advance(lexer, true);
+  }
+
+  if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    if (is_segment_start(lexer->lookahead)) {
+      lexer->result_symbol = VARIABLE_DOLLAR;
+      return true;
+    }
+    return false;
   }
 
   if (valid_symbols[FOLD_OPEN] && lexer->lookahead == '<') {

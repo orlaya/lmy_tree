@@ -420,8 +420,33 @@
       ]
     },
     "variable": {
-      "type": "PATTERN",
-      "value": "\\$[a-zA-Z_][\\w@-]*(?::[a-zA-Z_][\\w@-]*)*(?:\\.[a-zA-Z_][\\w@-]*(?::[a-zA-Z_][\\w@-]*)*)*"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "variable_dollar"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "variable_segment"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "variable_dot"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "variable_segment"
+              }
+            ]
+          }
+        }
+      ]
     },
     "raw_value": {
       "type": "PREC",
@@ -514,6 +539,22 @@
     {
       "type": "SYMBOL",
       "name": "preserve_delimiter"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "variable_dollar"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "variable_segment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "variable_dot"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "error_sentinel"
     }
   ],
   "inline": [],

@@ -8,6 +8,10 @@ export default grammar({
     $.fold_open,
     $.fold_close,
     $.preserve_delimiter,
+    $.variable_dollar,
+    $.variable_segment,
+    $.variable_dot,
+    $.error_sentinel,
   ],
 
   extras: $ => [
@@ -115,7 +119,11 @@ export default grammar({
       $.raw_value,
     ),
 
-    variable: $ => /\$[a-zA-Z_][\w@-]*(?::[a-zA-Z_][\w@-]*)*(?:\.[a-zA-Z_][\w@-]*(?::[a-zA-Z_][\w@-]*)*)*/,
+    variable: $ => seq(
+      $.variable_dollar,
+      $.variable_segment,
+      repeat(seq($.variable_dot, $.variable_segment)),
+    ),
 
     raw_value: $ => prec(-1, repeat1(choice(
       $.variable,

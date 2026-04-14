@@ -268,6 +268,29 @@
     }
   },
   {
+    "type": "variable",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "variable_dollar",
+          "named": true
+        },
+        {
+          "type": "variable_dot",
+          "named": true
+        },
+        {
+          "type": "variable_segment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "verify_statement",
     "named": true,
     "fields": {},
@@ -363,7 +386,15 @@
     "named": false
   },
   {
-    "type": "variable",
+    "type": "variable_dollar",
+    "named": true
+  },
+  {
+    "type": "variable_dot",
+    "named": true
+  },
+  {
+    "type": "variable_segment",
     "named": true
   },
   {
