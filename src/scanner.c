@@ -236,7 +236,8 @@ bool tree_sitter_lmy_external_scanner_scan(
         // Dot not followed by digit — mark_end stays at initial digits
       }
 
-      if (valid_symbols[NUMBER]) {
+      // If followed by a letter, it's not a standalone number (e.g. 45.88kg)
+      if (valid_symbols[NUMBER] && !is_segment_start(lexer->lookahead)) {
         lexer->result_symbol = NUMBER;
         return true;
       }
