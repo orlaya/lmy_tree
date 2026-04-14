@@ -564,6 +564,26 @@
                   {
                     "type": "PATTERN",
                     "value": "[^*\\/\\n\\r]+"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "/"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "glob"
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "[^*\\/\\n\\r]+"
                   },
                   {
                     "type": "STRING",

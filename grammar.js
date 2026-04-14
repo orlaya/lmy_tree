@@ -156,13 +156,12 @@ export default grammar({
         repeat(seq($.glob, optional(/[\w\-\/.]+/))),
       ),
       // Glob-leading: **/*.tsignore/**, *path*/path/**/*.ts
+      // Must contain at least one / — without a slash it's not a path
       seq(
         $.glob,
-        repeat(choice(
-          $.glob,
-          /[^*\/\n\r]+/,
-          '/',
-        )),
+        repeat(choice($.glob, /[^*\/\n\r]+/)),
+        '/',
+        repeat(choice($.glob, /[^*\/\n\r]+/, '/')),
       ),
     ),
 
