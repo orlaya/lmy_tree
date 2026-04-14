@@ -29,6 +29,13 @@
 ;  Scope operators
 ; ————————————————————————
 
+; OUTPUT::{ ... }
+(scope_block
+  name: (identifier) @label
+  "::" @operator
+  "{" @punctuation.bracket
+  "}" @punctuation.bracket)
+
 ; server:: (entering a scope)
 (scope_entry
   name: (identifier) @label

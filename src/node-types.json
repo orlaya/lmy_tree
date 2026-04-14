@@ -184,6 +184,60 @@
     }
   },
   {
+    "type": "scope_block",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "import_statement",
+          "named": true
+        },
+        {
+          "type": "list_item",
+          "named": true
+        },
+        {
+          "type": "scope_block",
+          "named": true
+        },
+        {
+          "type": "scope_entry",
+          "named": true
+        },
+        {
+          "type": "scope_return",
+          "named": true
+        },
+        {
+          "type": "section",
+          "named": true
+        },
+        {
+          "type": "verify_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "scope_entry",
     "named": true,
     "fields": {
@@ -238,6 +292,10 @@
         },
         {
           "type": "list_item",
+          "named": true
+        },
+        {
+          "type": "scope_block",
           "named": true
         },
         {

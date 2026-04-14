@@ -27,6 +27,7 @@ export default grammar({
       $.section,
       $.verify_statement,
       $.import_statement,
+      $.scope_block,
       $.scope_entry,
       $.scope_return,
       $.assignment,
@@ -42,6 +43,15 @@ export default grammar({
     section: $ => seq(
       '[', $.identifier, ']',
       optional(seq('aka', '[', $.identifier, ']')),
+    ),
+
+    // OUTPUT::{ ... }
+    scope_block: $ => seq(
+      field('name', $.identifier),
+      '::',
+      '{',
+      repeat(choice($._definition, /\r?\n/)),
+      '}',
     ),
 
     // server:: (entering nested scope)
