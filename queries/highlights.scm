@@ -71,7 +71,7 @@
 
 ; name: orlaya
 (assignment
-  key: (identifier) @property
+  key: (key) @property
   ":" @punctuation.delimiter)
 
 

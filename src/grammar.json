@@ -249,7 +249,7 @@
             "name": "key",
             "content": {
               "type": "SYMBOL",
-              "name": "identifier"
+              "name": "key"
             }
           },
           {
@@ -550,9 +550,14 @@
       "type": "PATTERN",
       "value": "@?[a-zA-Z_][\\w\\-\\/]*"
     },
-    "identifier": {
+    "key": {
       "type": "PATTERN",
       "value": "[a-z_#][\\w@#\\/.-]*(?::[a-z_#][\\w@#\\/.-]*)*",
+      "flags": "i"
+    },
+    "identifier": {
+      "type": "PATTERN",
+      "value": "[a-z_][\\w@-]*(?::[a-z_][\\w@-]*)*",
       "flags": "i"
     }
   },

@@ -8,7 +8,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "key",
             "named": true
           }
         ]
@@ -414,6 +414,10 @@
   {
     "type": "import",
     "named": false
+  },
+  {
+    "type": "key",
+    "named": true
   },
   {
     "type": "number",
