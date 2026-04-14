@@ -12,7 +12,6 @@ export default grammar({
     $.variable_qualifier,
     $.variable_segment,
     $.variable_dot,
-    $.glob,
     $.error_sentinel,
   ],
 
@@ -117,7 +116,6 @@ export default grammar({
       $.boolean,
       $.version,
       $.number,
-      $.path_value,
       $.identifier,
       $.raw_value,
     ),
@@ -147,23 +145,6 @@ export default grammar({
 
     // 3001
     number: $ => /\d+/,
-
-    // /Users/sarah/whatever or _CONFIG/**/*.ts or **/*.tsignore/**
-    path_value: $ => choice(
-      // Text-leading: _CONFIG/foo.yaml, _CONFIG/**/*.ts
-      seq(
-        /\/?[a-zA-Z_][\w\-\/.]*/,
-        repeat(seq($.glob, optional(/[\w\-\/.]+/))),
-      ),
-      // Glob-leading: **/*.tsignore/**, *path*/path/**/*.ts
-      // Must contain at least one / — without a slash it's not a path
-      seq(
-        $.glob,
-        repeat(choice($.glob, /[^*\/\n\r]+/)),
-        '/',
-        repeat(choice($.glob, /[^*\/\n\r]+/, '/')),
-      ),
-    ),
 
     // Path for imports/verify (allows @ prefix for npm scopes)
     path: $ => /@?[a-zA-Z_][\w\-\/]*/,

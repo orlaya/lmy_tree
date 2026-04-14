@@ -96,8 +96,6 @@
 (boolean) @boolean
 (version) @number
 (number) @number
-(path_value) @string.special
-(glob) @punctuation.special
 "*" @punctuation.special
 
 

@@ -411,10 +411,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "path_value"
-        },
-        {
-          "type": "SYMBOL",
           "name": "identifier"
         },
         {
@@ -509,93 +505,6 @@
       "type": "PATTERN",
       "value": "\\d+"
     },
-    "path_value": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "\\/?[a-zA-Z_][\\w\\-\\/.]*"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "glob"
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "PATTERN",
-                        "value": "[\\w\\-\\/.]+"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "glob"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "glob"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[^*\\/\\n\\r]+"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "/"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "glob"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[^*\\/\\n\\r]+"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "/"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
     "path": {
       "type": "PATTERN",
       "value": "@?[a-zA-Z_][\\w\\-\\/]*"
@@ -646,10 +555,6 @@
     {
       "type": "SYMBOL",
       "name": "variable_dot"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "glob"
     },
     {
       "type": "SYMBOL",

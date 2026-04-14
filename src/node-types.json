@@ -38,10 +38,6 @@
             "named": true
           },
           {
-            "type": "path_value",
-            "named": true
-          },
-          {
             "type": "raw_value",
             "named": true
           },
@@ -116,10 +112,6 @@
           "named": true
         },
         {
-          "type": "path_value",
-          "named": true
-        },
-        {
           "type": "raw_value",
           "named": true
         },
@@ -171,21 +163,6 @@
         },
         {
           "type": "variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "path_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "glob",
           "named": true
         }
       ]
@@ -341,10 +318,6 @@
     "named": false
   },
   {
-    "type": "/",
-    "named": false
-  },
-  {
     "type": "//",
     "named": false
   },
@@ -378,10 +351,6 @@
   },
   {
     "type": "fold_open",
-    "named": true
-  },
-  {
-    "type": "glob",
     "named": true
   },
   {
