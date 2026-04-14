@@ -151,7 +151,7 @@ export default grammar({
     boolean: $ => choice('true', 'false'),
 
     // 1.0.0, ^1.1.0, ~2.3.0, 1.0.0-beta.1-f92627f
-    version: $ => prec(1, /[~^]?\d+(?:\.\d+)+(?:-[\w.]+)*/),
+    version: $ => token(prec(1, /[~^]?\d+(?:\.\d+)+(?:-[\w.]+)*/)),
 
     // 3001
     number: $ => /\d+/,

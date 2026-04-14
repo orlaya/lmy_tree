@@ -552,11 +552,14 @@
       ]
     },
     "version": {
-      "type": "PREC",
-      "value": 1,
+      "type": "TOKEN",
       "content": {
-        "type": "PATTERN",
-        "value": "[~^]?\\d+(?:\\.\\d+)+(?:-[\\w.]+)*"
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "PATTERN",
+          "value": "[~^]?\\d+(?:\\.\\d+)+(?:-[\\w.]+)*"
+        }
       }
     },
     "number": {
