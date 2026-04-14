@@ -32,7 +32,7 @@ static bool is_digit(int32_t c) {
 
 static bool is_version_tag_char(int32_t c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-         (c >= '0' && c <= '9') || c == '_' || c == '.';
+         (c >= '0' && c <= '9') || c == '_';
 }
 
 static bool is_key_start(int32_t c) {
@@ -112,7 +112,7 @@ bool tree_sitter_lmy_external_scanner_scan(
   if (valid_symbols[VERSION_DOT] && lexer->lookahead == '.') {
     lexer->advance(lexer, false);
     lexer->mark_end(lexer);
-    if (is_digit(lexer->lookahead)) {
+    if (is_digit(lexer->lookahead) || is_version_tag_char(lexer->lookahead)) {
       lexer->result_symbol = VERSION_DOT;
       return true;
     }

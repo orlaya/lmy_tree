@@ -162,7 +162,11 @@ export default grammar({
       $.version_dot,
       $.version_digits,
       repeat(seq($.version_dot, $.version_digits)),
-      repeat(seq($.version_dash, $.version_tag)),
+      repeat(seq(
+        $.version_dash,
+        $.version_tag,
+        repeat(seq($.version_dot, choice($.version_digits, $.version_tag))),
+      )),
     ),
 
     // 3001 or 3.14

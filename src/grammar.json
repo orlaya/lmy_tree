@@ -597,6 +597,31 @@
               {
                 "type": "SYMBOL",
                 "name": "version_tag"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "version_dot"
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "version_digits"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "version_tag"
+                        }
+                      ]
+                    }
+                  ]
+                }
               }
             ]
           }
