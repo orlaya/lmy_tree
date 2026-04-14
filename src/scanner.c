@@ -22,13 +22,14 @@ static bool is_segment_char(int32_t c) {
 }
 
 static bool is_key_start(int32_t c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '#';
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '#' ||
+         c == '*' || c == '.';
 }
 
 static bool is_key_char(int32_t c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
          (c >= '0' && c <= '9') || c == '_' || c == '@' || c == '#' ||
-         c == '/' || c == '.' || c == '-';
+         c == '/' || c == '.' || c == '-' || c == '*';
 }
 
 void *tree_sitter_lmy_external_scanner_create() { return NULL; }
