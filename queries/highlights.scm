@@ -98,6 +98,7 @@
 (number) @number
 (path_value) @string.special
 (glob) @punctuation.special
+"*" @punctuation.special
 
 
 ;
