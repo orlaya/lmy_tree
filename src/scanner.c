@@ -213,6 +213,19 @@ bool tree_sitter_lmy_external_scanner_scan(
       lexer->advance(lexer, false);
     }
     lexer->mark_end(lexer);
+
+    // At value start (VERSION_PREFIX still valid): peek ahead to confirm
+    // this is actually a version (needs at least two .digit groups),
+    // otherwise let the number regex handle it
+    if (valid_symbols[VERSION_PREFIX]) {
+      // Need: .digits.digits
+      if (lexer->lookahead != '.') return false;
+      lexer->advance(lexer, false);
+      if (!is_digit(lexer->lookahead)) return false;
+      while (is_digit(lexer->lookahead)) lexer->advance(lexer, false);
+      if (lexer->lookahead != '.') return false;
+    }
+
     lexer->result_symbol = VERSION_DIGITS;
     return true;
   }
