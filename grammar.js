@@ -5,12 +5,12 @@ export default grammar({
   name: 'lmy',
 
   extras: $ => [
-    /\s/,
+    /[ \t]/,
     $.comment,
   ],
 
   rules: {
-    source_file: $ => repeat($._definition),
+    source_file: $ => repeat(choice($._definition, /\r?\n/)),
 
     _definition: $ => choice(
       $.section,

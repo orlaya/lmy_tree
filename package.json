@@ -2,6 +2,7 @@
   "name": "lmy_tree",
   "type": "module",
   "version": "0.0.0",
+  "sideEffects": false,
   "scripts": {
     "check": "eslint . --quiet --no-warn-ignored; e=$?; tsc --noEmit --pretty; t=$?; [ $e -eq 0 ] && [ $t -eq 0 ] && echo \"\\n✨ Sweet! Everything's just dandy!\\n\""
   },
