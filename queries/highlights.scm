@@ -91,11 +91,16 @@
 
 ;
 ;
-; Multiline markers
+; Multiline blocks
 ; ————————————————————————
-(multiline_open) @operator
-(multiline_close) @operator
-(text_line) @string
+(multiline_fold
+  "<<" @operator
+  ">>" @operator)
+(multiline_fold) @string
+
+(multiline_preserve
+  "||" @operator)
+(multiline_preserve) @string
 
 
 ;

@@ -48,14 +48,6 @@
         {
           "type": "SYMBOL",
           "name": "list_item"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "multiline_close"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "text_line"
         }
       ]
     },
@@ -264,25 +256,81 @@
         }
       ]
     },
-    "multiline_open": {
-      "type": "CHOICE",
+    "multiline_fold": {
+      "type": "SEQ",
       "members": [
         {
           "type": "STRING",
           "value": "<<"
         },
         {
-          "type": "STRING",
-          "value": "||"
-        }
-      ]
-    },
-    "multiline_close": {
-      "type": "CHOICE",
-      "members": [
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "\\r?\\n"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[^\\n\\r]+"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\r?\\n"
+        },
         {
           "type": "STRING",
           "value": ">>"
+        }
+      ]
+    },
+    "multiline_preserve": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "||"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "\\r?\\n"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[^\\n\\r]+"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\r?\\n"
         },
         {
           "type": "STRING",
@@ -290,20 +338,16 @@
         }
       ]
     },
-    "text_line": {
-      "type": "PREC",
-      "value": -2,
-      "content": {
-        "type": "PATTERN",
-        "value": "[^\\n\\r]+"
-      }
-    },
     "_value": {
       "type": "CHOICE",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "multiline_open"
+          "name": "multiline_fold"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "multiline_preserve"
         },
         {
           "type": "SYMBOL",

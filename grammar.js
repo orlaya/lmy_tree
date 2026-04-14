@@ -20,8 +20,6 @@ export default grammar({
       $.scope_return,
       $.assignment,
       $.list_item,
-      $.multiline_close,
-      $.text_line,
     ),
 
     //
@@ -78,14 +76,23 @@ export default grammar({
     //
     // ────────────────────────────────
 
-    multiline_open: $ => choice('<<', '||'),
+    multiline_fold: $ => seq(
+      '<<',
+      repeat(seq(/\r?\n/, optional(/[^\n\r]+/))),
+      /\r?\n/,
+      '>>',
+    ),
 
-    multiline_close: $ => choice('>>', '||'),
-
-    text_line: $ => prec(-2, /[^\n\r]+/),
+    multiline_preserve: $ => seq(
+      '||',
+      repeat(seq(/\r?\n/, optional(/[^\n\r]+/))),
+      /\r?\n/,
+      '||',
+    ),
 
     _value: $ => choice(
-      $.multiline_open,
+      $.multiline_fold,
+      $.multiline_preserve,
       $.string,
       $.boolean,
       $.version,
