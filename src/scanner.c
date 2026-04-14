@@ -94,11 +94,30 @@ bool tree_sitter_lmy_external_scanner_scan(
       lexer->advance(lexer, false);
     }
     lexer->mark_end(lexer);
-    // Only emit GLOB when NOT followed by a space/tab
-    // so `* text` stays as raw_value, but `*\n` and `*` at EOF are valid globs
+
     if (lexer->lookahead != ' ' && lexer->lookahead != '\t') {
       lexer->result_symbol = GLOB;
       return true;
+    }
+
+    // Space after * — peek ahead to see if it's just whitespace/comment/EOL.
+    // `* also not a glob` → space then letter → reject
+    // `**/*===* // comment` → space then // → accept
+    // `**/*===* ` → space then EOL → accept
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+      lexer->advance(lexer, false);
+    }
+    int32_t after = lexer->lookahead;
+    if (after == '\n' || after == '\r' || after == 0) {
+      lexer->result_symbol = GLOB;
+      return true;
+    }
+    if (after == '/') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '/') {
+        lexer->result_symbol = GLOB;
+        return true;
+      }
     }
     return false;
   }
