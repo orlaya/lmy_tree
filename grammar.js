@@ -8,7 +8,6 @@ export default grammar({
     $.fold_open,
     $.fold_close,
     $.preserve_delimiter,
-    $.error_sentinel,
   ],
 
   extras: $ => [

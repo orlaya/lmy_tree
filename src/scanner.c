@@ -4,7 +4,6 @@ enum TokenType {
   FOLD_OPEN,           // <<
   FOLD_CLOSE,          // >>
   PRESERVE_DELIMITER,  // ||
-  ERROR_SENTINEL,
 };
 
 void *tree_sitter_lmy_external_scanner_create() { return NULL; }
@@ -17,8 +16,6 @@ bool tree_sitter_lmy_external_scanner_scan(
   TSLexer *lexer,
   const bool *valid_symbols
 ) {
-  if (valid_symbols[ERROR_SENTINEL]) return false;
-
   if (valid_symbols[FOLD_OPEN] && lexer->lookahead == '<') {
     lexer->advance(lexer, false);
     if (lexer->lookahead == '<') {

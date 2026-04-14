@@ -442,10 +442,6 @@
     {
       "type": "SYMBOL",
       "name": "preserve_delimiter"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "error_sentinel"
     }
   ],
   "inline": [],

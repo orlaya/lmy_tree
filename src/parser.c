@@ -9,10 +9,10 @@
 #define LANGUAGE_VERSION 15
 #define STATE_COUNT 55
 #define LARGE_STATE_COUNT 3
-#define SYMBOL_COUNT 46
+#define SYMBOL_COUNT 45
 #define ALIAS_COUNT 0
-#define TOKEN_COUNT 28
-#define EXTERNAL_TOKEN_COUNT 4
+#define TOKEN_COUNT 27
+#define EXTERNAL_TOKEN_COUNT 3
 #define FIELD_COUNT 3
 #define MAX_ALIAS_SEQUENCE_LENGTH 7
 #define MAX_RESERVED_WORD_SET_SIZE 0
@@ -46,25 +46,24 @@ enum ts_symbol_identifiers {
   sym_fold_open = 24,
   sym_fold_close = 25,
   sym_preserve_delimiter = 26,
-  sym_error_sentinel = 27,
-  sym_source_file = 28,
-  sym__definition = 29,
-  sym_section = 30,
-  sym_scope_entry = 31,
-  sym_scope_return = 32,
-  sym_verify_statement = 33,
-  sym_import_statement = 34,
-  sym_assignment = 35,
-  sym_list_item = 36,
-  sym_comment = 37,
-  sym_multiline_fold = 38,
-  sym_multiline_preserve = 39,
-  sym__value = 40,
-  sym_raw_value = 41,
-  sym_boolean = 42,
-  aux_sym_source_file_repeat1 = 43,
-  aux_sym_import_statement_repeat1 = 44,
-  aux_sym_multiline_fold_repeat1 = 45,
+  sym_source_file = 27,
+  sym__definition = 28,
+  sym_section = 29,
+  sym_scope_entry = 30,
+  sym_scope_return = 31,
+  sym_verify_statement = 32,
+  sym_import_statement = 33,
+  sym_assignment = 34,
+  sym_list_item = 35,
+  sym_comment = 36,
+  sym_multiline_fold = 37,
+  sym_multiline_preserve = 38,
+  sym__value = 39,
+  sym_raw_value = 40,
+  sym_boolean = 41,
+  aux_sym_source_file_repeat1 = 42,
+  aux_sym_import_statement_repeat1 = 43,
+  aux_sym_multiline_fold_repeat1 = 44,
 };
 
 static const char * const ts_symbol_names[] = {
@@ -95,7 +94,6 @@ static const char * const ts_symbol_names[] = {
   [sym_fold_open] = "fold_open",
   [sym_fold_close] = "fold_close",
   [sym_preserve_delimiter] = "preserve_delimiter",
-  [sym_error_sentinel] = "error_sentinel",
   [sym_source_file] = "source_file",
   [sym__definition] = "_definition",
   [sym_section] = "section",
@@ -144,7 +142,6 @@ static const TSSymbol ts_symbol_map[] = {
   [sym_fold_open] = sym_fold_open,
   [sym_fold_close] = sym_fold_close,
   [sym_preserve_delimiter] = sym_preserve_delimiter,
-  [sym_error_sentinel] = sym_error_sentinel,
   [sym_source_file] = sym_source_file,
   [sym__definition] = sym__definition,
   [sym_section] = sym_section,
@@ -271,10 +268,6 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym_preserve_delimiter] = {
-    .visible = true,
-    .named = true,
-  },
-  [sym_error_sentinel] = {
     .visible = true,
     .named = true,
   },
@@ -1886,7 +1879,6 @@ static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
     [sym_fold_open] = ACTIONS(1),
     [sym_fold_close] = ACTIONS(1),
     [sym_preserve_delimiter] = ACTIONS(1),
-    [sym_error_sentinel] = ACTIONS(1),
   },
   [STATE(1)] = {
     [sym_source_file] = STATE(43),
@@ -2739,14 +2731,12 @@ enum ts_external_scanner_symbol_identifiers {
   ts_external_token_fold_open = 0,
   ts_external_token_fold_close = 1,
   ts_external_token_preserve_delimiter = 2,
-  ts_external_token_error_sentinel = 3,
 };
 
 static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
   [ts_external_token_fold_open] = sym_fold_open,
   [ts_external_token_fold_close] = sym_fold_close,
   [ts_external_token_preserve_delimiter] = sym_preserve_delimiter,
-  [ts_external_token_error_sentinel] = sym_error_sentinel,
 };
 
 static const bool ts_external_scanner_states[5][EXTERNAL_TOKEN_COUNT] = {
@@ -2754,7 +2744,6 @@ static const bool ts_external_scanner_states[5][EXTERNAL_TOKEN_COUNT] = {
     [ts_external_token_fold_open] = true,
     [ts_external_token_fold_close] = true,
     [ts_external_token_preserve_delimiter] = true,
-    [ts_external_token_error_sentinel] = true,
   },
   [2] = {
     [ts_external_token_fold_open] = true,
