@@ -94,8 +94,15 @@ bool tree_sitter_lmy_external_scanner_scan(
       lexer->advance(lexer, false);
     }
     lexer->mark_end(lexer);
-    lexer->result_symbol = GLOB;
-    return true;
+    // Only emit GLOB when immediately followed by path-relevant char
+    // (not whitespace/newline/EOF) — so `* text` stays as raw_value
+    if (lexer->lookahead != ' ' && lexer->lookahead != '\t' &&
+        lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
+        !lexer->eof(lexer)) {
+      lexer->result_symbol = GLOB;
+      return true;
+    }
+    return false;
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {

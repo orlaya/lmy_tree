@@ -545,10 +545,6 @@
               "name": "glob"
             },
             {
-              "type": "STRING",
-              "value": "/"
-            },
-            {
               "type": "REPEAT1",
               "content": {
                 "type": "CHOICE",
