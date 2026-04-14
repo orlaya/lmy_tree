@@ -23,7 +23,7 @@ static bool is_segment_char(int32_t c) {
 
 static bool is_key_start(int32_t c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '#' ||
-         c == '*' || c == '.';
+         c == '*' || c == '.' || c == '@';
 }
 
 static bool is_key_char(int32_t c) {
