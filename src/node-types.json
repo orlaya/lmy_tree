@@ -268,11 +268,6 @@
     }
   },
   {
-    "type": "variable",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "verify_statement",
     "named": true,
     "fields": {},
@@ -297,10 +292,6 @@
   },
   {
     "type": "--",
-    "named": false
-  },
-  {
-    "type": ".",
     "named": false
   },
   {
@@ -370,6 +361,10 @@
   {
     "type": "true",
     "named": false
+  },
+  {
+    "type": "variable",
+    "named": true
   },
   {
     "type": "verify",
