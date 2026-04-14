@@ -16,6 +16,10 @@ bool tree_sitter_lmy_external_scanner_scan(
   TSLexer *lexer,
   const bool *valid_symbols
 ) {
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+    lexer->advance(lexer, true);
+  }
+
   if (valid_symbols[FOLD_OPEN] && lexer->lookahead == '<') {
     lexer->advance(lexer, false);
     if (lexer->lookahead == '<') {
