@@ -13,6 +13,11 @@ export default grammar({
     $.variable_segment,
     $.variable_dot,
     $.key,
+    $.version_prefix,
+    $.version_digits,
+    $.version_dot,
+    $.version_dash,
+    $.version_tag,
     $.error_sentinel,
   ],
 
@@ -151,10 +156,17 @@ export default grammar({
     boolean: $ => choice('true', 'false'),
 
     // 1.0.0, ^1.1.0, ~2.3.0, 1.0.0-beta.1-f92627f
-    version: $ => token(prec(1, /[~^]?\d+(?:\.\d+)+(?:-[\w.]+)*/)),
+    version: $ => seq(
+      optional($.version_prefix),
+      $.version_digits,
+      $.version_dot,
+      $.version_digits,
+      repeat(seq($.version_dot, $.version_digits)),
+      repeat(seq($.version_dash, $.version_tag)),
+    ),
 
-    // 3001
-    number: $ => /\d+/,
+    // 3001 or 3.14
+    number: $ => /\d+(\.\d+)?/,
 
     // Path for imports/verify (allows @ prefix for npm scopes)
     path: $ => /@?[a-zA-Z_][\w\-\/]*/,

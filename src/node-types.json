@@ -352,6 +352,37 @@
     }
   },
   {
+    "type": "version",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "version_dash",
+          "named": true
+        },
+        {
+          "type": "version_digits",
+          "named": true
+        },
+        {
+          "type": "version_dot",
+          "named": true
+        },
+        {
+          "type": "version_prefix",
+          "named": true
+        },
+        {
+          "type": "version_tag",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "$",
     "named": false
   },
@@ -460,7 +491,23 @@
     "named": false
   },
   {
-    "type": "version",
+    "type": "version_dash",
+    "named": true
+  },
+  {
+    "type": "version_digits",
+    "named": true
+  },
+  {
+    "type": "version_dot",
+    "named": true
+  },
+  {
+    "type": "version_prefix",
+    "named": true
+  },
+  {
+    "type": "version_tag",
     "named": true
   },
   {

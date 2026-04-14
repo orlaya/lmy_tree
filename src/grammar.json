@@ -543,19 +543,69 @@
       ]
     },
     "version": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 1,
-        "content": {
-          "type": "PATTERN",
-          "value": "[~^]?\\d+(?:\\.\\d+)+(?:-[\\w.]+)*"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "version_prefix"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "version_digits"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "version_dot"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "version_digits"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "version_dot"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "version_digits"
+              }
+            ]
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "version_dash"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "version_tag"
+              }
+            ]
+          }
         }
-      }
+      ]
     },
     "number": {
       "type": "PATTERN",
-      "value": "\\d+"
+      "value": "\\d+(\\.\\d+)?"
     },
     "path": {
       "type": "PATTERN",
@@ -611,6 +661,26 @@
     {
       "type": "SYMBOL",
       "name": "key"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "version_prefix"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "version_digits"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "version_dot"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "version_dash"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "version_tag"
     },
     {
       "type": "SYMBOL",

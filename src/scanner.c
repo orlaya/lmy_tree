@@ -9,6 +9,11 @@ enum TokenType {
   VARIABLE_SEGMENT,    // final identifier segment (FOO in $sv.FOO, or BAR in $BAR)
   VARIABLE_DOT,        // . between segments
   KEY,                 // assignment key (wider charset than identifier)
+  VERSION_PREFIX,      // ^ or ~
+  VERSION_DIGITS,      // digit runs (1, 0, 3)
+  VERSION_DOT,         // . between digit groups
+  VERSION_DASH,        // - before pre-release tag
+  VERSION_TAG,         // pre-release tag (beta, f92627f, etc)
   ERROR_SENTINEL,
 };
 
@@ -19,6 +24,15 @@ static bool is_segment_start(int32_t c) {
 static bool is_segment_char(int32_t c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
          (c >= '0' && c <= '9') || c == '_' || c == '@' || c == '-';
+}
+
+static bool is_digit(int32_t c) {
+  return c >= '0' && c <= '9';
+}
+
+static bool is_version_tag_char(int32_t c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+         (c >= '0' && c <= '9') || c == '_' || c == '.';
 }
 
 static bool is_key_start(int32_t c) {
@@ -93,6 +107,46 @@ bool tree_sitter_lmy_external_scanner_scan(
     return true;
   }
 
+  // ── Version internals: no whitespace skip (must be adjacent) ──
+
+  if (valid_symbols[VERSION_DOT] && lexer->lookahead == '.') {
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    if (is_digit(lexer->lookahead)) {
+      lexer->result_symbol = VERSION_DOT;
+      return true;
+    }
+    return false;
+  }
+
+  if (valid_symbols[VERSION_DASH] && lexer->lookahead == '-') {
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    if (is_version_tag_char(lexer->lookahead)) {
+      lexer->result_symbol = VERSION_DASH;
+      return true;
+    }
+    return false;
+  }
+
+  if (valid_symbols[VERSION_TAG] && is_version_tag_char(lexer->lookahead)) {
+    while (is_version_tag_char(lexer->lookahead)) {
+      lexer->advance(lexer, false);
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = VERSION_TAG;
+    return true;
+  }
+
+  if (valid_symbols[VERSION_DIGITS] && is_digit(lexer->lookahead)) {
+    while (is_digit(lexer->lookahead)) {
+      lexer->advance(lexer, false);
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = VERSION_DIGITS;
+    return true;
+  }
+
   // ── Whitespace skip for remaining tokens ──
 
   if (lexer->eof(lexer)) return false;
@@ -151,6 +205,16 @@ bool tree_sitter_lmy_external_scanner_scan(
       }
       return false;
     }
+  }
+
+  if (valid_symbols[VERSION_PREFIX] && (lexer->lookahead == '^' || lexer->lookahead == '~')) {
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    if (is_digit(lexer->lookahead)) {
+      lexer->result_symbol = VERSION_PREFIX;
+      return true;
+    }
+    return false;
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {

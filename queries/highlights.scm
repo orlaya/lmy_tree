@@ -103,9 +103,15 @@
 ; ————————————————————————
 (string) @string
 (boolean) @boolean
-(version) @boolean
 (number) @number
 "*" @punctuation.special
+
+; Version parts
+(version_prefix) @operator
+(version_digits) @boolean
+(version_dot) @punctuation.delimiter
+(version_dash) @punctuation.delimiter
+(version_tag) @string.special
 
 
 ;
