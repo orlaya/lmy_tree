@@ -152,9 +152,11 @@ export default grammar({
         repeat(seq($.glob, optional(/[\w\-\/.]+/))),
       ),
       seq(
-        $.glob,
-        /[\w\-\/.]+/,
-        repeat(seq($.glob, optional(/[\w\-\/.]+/))),
+        $.glob, '/',
+        repeat1(choice(
+          $.glob,
+          /[\w\-\/.]+/,
+        )),
       ),
     ),
 

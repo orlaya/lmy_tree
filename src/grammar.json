@@ -545,29 +545,21 @@
               "name": "glob"
             },
             {
-              "type": "PATTERN",
-              "value": "[\\w\\-\\/.]+"
+              "type": "STRING",
+              "value": "/"
             },
             {
-              "type": "REPEAT",
+              "type": "REPEAT1",
               "content": {
-                "type": "SEQ",
+                "type": "CHOICE",
                 "members": [
                   {
                     "type": "SYMBOL",
                     "name": "glob"
                   },
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "PATTERN",
-                        "value": "[\\w\\-\\/.]+"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
+                    "type": "PATTERN",
+                    "value": "[\\w\\-\\/.]+"
                   }
                 ]
               }
