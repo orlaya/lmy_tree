@@ -10,10 +10,6 @@
           {
             "type": "key",
             "named": true
-          },
-          {
-            "type": "string",
-            "named": true
           }
         ]
       },

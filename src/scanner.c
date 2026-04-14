@@ -102,33 +102,55 @@ bool tree_sitter_lmy_external_scanner_scan(
     lexer->advance(lexer, true);
   }
 
-  if (valid_symbols[KEY] && column_before_skip == 0 && is_key_start(lexer->lookahead)) {
-    lexer->advance(lexer, false);
-    while (is_key_char(lexer->lookahead)) {
+  if (valid_symbols[KEY] && column_before_skip == 0) {
+    // Quoted key: "something":
+    if (lexer->lookahead == '"') {
       lexer->advance(lexer, false);
-    }
-    lexer->mark_end(lexer);
-
-    bool found_trailing_colon = false;
-    while (lexer->lookahead == ':') {
-      lexer->advance(lexer, false);
-      if (is_key_start(lexer->lookahead)) {
+      while (lexer->lookahead != '"' && lexer->lookahead != '\n' && !lexer->eof(lexer)) {
         lexer->advance(lexer, false);
-        while (is_key_char(lexer->lookahead)) {
-          lexer->advance(lexer, false);
-        }
-        lexer->mark_end(lexer);
-      } else {
-        found_trailing_colon = true;
-        break;
       }
+      if (lexer->lookahead != '"') return false;
+      lexer->advance(lexer, false);
+      lexer->mark_end(lexer);
+      if (lexer->lookahead == ':') {
+        lexer->advance(lexer, false);
+        if (lexer->lookahead != ':') {
+          lexer->result_symbol = KEY;
+          return true;
+        }
+      }
+      return false;
     }
 
-    if (found_trailing_colon && lexer->lookahead != ':') {
-      lexer->result_symbol = KEY;
-      return true;
+    // Bare key: something:
+    if (is_key_start(lexer->lookahead)) {
+      lexer->advance(lexer, false);
+      while (is_key_char(lexer->lookahead)) {
+        lexer->advance(lexer, false);
+      }
+      lexer->mark_end(lexer);
+
+      bool found_trailing_colon = false;
+      while (lexer->lookahead == ':') {
+        lexer->advance(lexer, false);
+        if (is_key_start(lexer->lookahead)) {
+          lexer->advance(lexer, false);
+          while (is_key_char(lexer->lookahead)) {
+            lexer->advance(lexer, false);
+          }
+          lexer->mark_end(lexer);
+        } else {
+          found_trailing_colon = true;
+          break;
+        }
+      }
+
+      if (found_trailing_colon && lexer->lookahead != ':') {
+        lexer->result_symbol = KEY;
+        return true;
+      }
+      return false;
     }
-    return false;
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {

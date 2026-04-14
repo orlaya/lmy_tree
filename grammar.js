@@ -82,7 +82,7 @@ export default grammar({
     // name: orlaya  OR  catalogs: (value optional for list headers)
     // prec.right = prefer to grab the value when there's ambiguity
     assignment: $ => prec.right(seq(
-      field('key', choice($.key, $.string)),
+      field('key', $.key),
       ':',
       optional(field('value', $._value)),
     )),
