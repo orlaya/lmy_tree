@@ -8,6 +8,7 @@ enum TokenType {
   VARIABLE_QUALIFIER,  // namespace segment before dot (sv in $sv.FOO)
   VARIABLE_SEGMENT,    // final identifier segment (FOO in $sv.FOO, or BAR in $BAR)
   VARIABLE_DOT,        // . between segments
+  KEY,                 // assignment key (wider charset than identifier)
   ERROR_SENTINEL,
 };
 
@@ -18,6 +19,16 @@ static bool is_segment_start(int32_t c) {
 static bool is_segment_char(int32_t c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
          (c >= '0' && c <= '9') || c == '_' || c == '@' || c == '-';
+}
+
+static bool is_key_start(int32_t c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '#';
+}
+
+static bool is_key_char(int32_t c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+         (c >= '0' && c <= '9') || c == '_' || c == '@' || c == '#' ||
+         c == '/' || c == '.' || c == '-';
 }
 
 void *tree_sitter_lmy_external_scanner_create() { return NULL; }
@@ -85,6 +96,30 @@ bool tree_sitter_lmy_external_scanner_scan(
 
   while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
     lexer->advance(lexer, true);
+  }
+
+  if (valid_symbols[KEY] && is_key_start(lexer->lookahead)) {
+    lexer->advance(lexer, false);
+    while (is_key_char(lexer->lookahead)) {
+      lexer->advance(lexer, false);
+    }
+    lexer->mark_end(lexer);
+
+    while (lexer->lookahead == ':') {
+      lexer->advance(lexer, false);
+      if (is_key_start(lexer->lookahead)) {
+        lexer->advance(lexer, false);
+        while (is_key_char(lexer->lookahead)) {
+          lexer->advance(lexer, false);
+        }
+        lexer->mark_end(lexer);
+      } else {
+        break;
+      }
+    }
+
+    lexer->result_symbol = KEY;
+    return true;
   }
 
   if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {

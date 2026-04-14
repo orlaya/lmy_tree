@@ -12,6 +12,7 @@ export default grammar({
     $.variable_qualifier,
     $.variable_segment,
     $.variable_dot,
+    $.key,
     $.error_sentinel,
   ],
 
@@ -179,8 +180,6 @@ export default grammar({
     //     [\w@-]*        then more word chars
     //   )*
     //
-    key: $ => /[a-z_#][\w@#\/.-]*(?::[a-z_#][\w@#\/.-]*)*/i,
-
     identifier: $ => /[a-z_][\w@-]*(?::[a-z_][\w@-]*)*/i,
   },
 })

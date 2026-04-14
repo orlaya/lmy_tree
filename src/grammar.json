@@ -550,11 +550,6 @@
       "type": "PATTERN",
       "value": "@?[a-zA-Z_][\\w\\-\\/]*"
     },
-    "key": {
-      "type": "PATTERN",
-      "value": "[a-z_#][\\w@#\\/.-]*(?::[a-z_#][\\w@#\\/.-]*)*",
-      "flags": "i"
-    },
     "identifier": {
       "type": "PATTERN",
       "value": "[a-z_][\\w@-]*(?::[a-z_][\\w@-]*)*",
@@ -601,6 +596,10 @@
     {
       "type": "SYMBOL",
       "name": "variable_dot"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "key"
     },
     {
       "type": "SYMBOL",
