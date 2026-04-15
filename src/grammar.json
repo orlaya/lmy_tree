@@ -558,7 +558,7 @@
               },
               {
                 "type": "PATTERN",
-                "value": "[^$*\\/\\n\\r\\[]+"
+                "value": "[^$*\\/\\n\\r\\[\\]]+"
               },
               {
                 "type": "STRING",
@@ -585,7 +585,7 @@
                 },
                 {
                   "type": "PATTERN",
-                  "value": "[^$*\\/\\n\\r]+"
+                  "value": "[^$*\\/\\n\\r\\[\\]]+"
                 },
                 {
                   "type": "STRING",

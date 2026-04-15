@@ -148,14 +148,14 @@ export default grammar({
     raw_value: $ => prec(-1, seq(
       choice(
         $.variable,
-        /[^$*\/\n\r\[]+/,
+        /[^$*\/\n\r\[\]]+/,
         '/',
         '$',
         '*',
       ),
       repeat(choice(
         $.variable,
-        /[^$*\/\n\r]+/,
+        /[^$*\/\n\r\[\]]+/,
         '/',
         '$',
         '*',
