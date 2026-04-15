@@ -72,8 +72,15 @@ export default grammar({
     //
     // ────────────────────────────────
 
-    // verify::mauve/config
-    verify_statement: $ => seq('verify', '::', $.path),
+    // verify ombre::{ PNPM_CATALOGS, PNPM_SETTINGS }
+    verify_statement: $ => seq(
+      'verify',
+      $.path,
+      '::',
+      '{',
+      commaSep($.identifier),
+      '}',
+    ),
 
     // import vite::{defineConfig}
     import_statement: $ => seq(

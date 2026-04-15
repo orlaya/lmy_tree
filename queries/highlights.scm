@@ -52,10 +52,13 @@
 ; Statements
 ; ————————————————————————
 
-; verify::mauve/config
+; verify ombre::{ PNPM_CATALOGS, PNPM_SETTINGS }
 (verify_statement
+  (path) @string.special
   "::" @operator
-  (path) @string.special)
+  "{" @punctuation.bracket
+  (identifier) @title
+  "}" @punctuation.bracket)
 
 ; import vite::{defineConfig}
 (import_statement
