@@ -118,11 +118,11 @@
 ;
 ; Multiline blocks
 ; ————————————————————————
-(fold_open) @operator
-(fold_close) @operator
+(fold_open) @punctuation
+(fold_close) @punctuation
 (multiline_fold) @string
 
-(preserve_delimiter) @operator
+(preserve_delimiter) @punctuation ; was @operator
 (multiline_preserve) @string
 
 
