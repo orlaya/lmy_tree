@@ -623,7 +623,7 @@
               },
               {
                 "type": "PATTERN",
-                "value": "[^ \\t$*\\/\\n\\r\\[\\]]+"
+                "value": "[^ \\t$*\\/\\n\\r\\[]+"
               },
               {
                 "type": "STRING",
@@ -650,7 +650,7 @@
                 },
                 {
                   "type": "PATTERN",
-                  "value": "[^$*\\/\\n\\r\\[\\]]+"
+                  "value": "[^$*\\/\\n\\r]+"
                 },
                 {
                   "type": "STRING",
