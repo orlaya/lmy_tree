@@ -59,6 +59,7 @@
   "{" @punctuation.bracket
   (identifier) @title
   "}" @punctuation.bracket)
+(verify_statement "," @punctuation.delimiter)
 
 ; import vite::{defineConfig}
 (import_statement
@@ -67,6 +68,7 @@
   "{" @punctuation.bracket
   (identifier) @variable
   "}" @punctuation.bracket)
+(import_statement "," @punctuation.delimiter)
 
 
 ;
