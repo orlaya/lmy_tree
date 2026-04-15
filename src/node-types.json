@@ -20,6 +20,14 @@
           "named": true
         },
         {
+          "type": "injection_delimiter",
+          "named": true
+        },
+        {
+          "type": "language_tag",
+          "named": true
+        },
+        {
           "type": "number",
           "named": true
         },
@@ -64,7 +72,7 @@
         ]
       },
       "value": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
           {
@@ -73,6 +81,14 @@
           },
           {
             "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "injection_delimiter",
+            "named": true
+          },
+          {
+            "type": "language_tag",
             "named": true
           },
           {
@@ -138,7 +154,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
@@ -147,6 +163,14 @@
         },
         {
           "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "injection_delimiter",
+          "named": true
+        },
+        {
+          "type": "language_tag",
           "named": true
         },
         {
@@ -509,7 +533,15 @@
     "named": false
   },
   {
+    "type": "injection_delimiter",
+    "named": true
+  },
+  {
     "type": "key",
+    "named": true
+  },
+  {
+    "type": "language_tag",
     "named": true
   },
   {
@@ -578,6 +610,10 @@
   },
   {
     "type": "}",
+    "named": false
+  },
+  {
+    "type": "~",
     "named": false
   }
 ]

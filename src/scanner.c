@@ -15,6 +15,8 @@ enum TokenType {
   VERSION_DASH,        // - before pre-release tag
   VERSION_TAG,         // pre-release tag (beta, f92627f, etc)
   NUMBER,              // 34 or 45.70
+  LANGUAGE_TAG,        // sh, py, js, sql etc (before ~~)
+  INJECTION_DELIMITER, // ~~
   ERROR_SENTINEL,
 };
 
@@ -197,6 +199,33 @@ bool tree_sitter_lmy_external_scanner_scan(
       }
       return false;
     }
+  }
+
+  if (valid_symbols[LANGUAGE_TAG] && lexer->lookahead >= 'a' && lexer->lookahead <= 'z') {
+    lexer->advance(lexer, false);
+    while (lexer->lookahead >= 'a' && lexer->lookahead <= 'z') {
+      lexer->advance(lexer, false);
+    }
+    lexer->mark_end(lexer);
+    if (lexer->lookahead == '~') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '~') {
+        lexer->result_symbol = LANGUAGE_TAG;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  if (valid_symbols[INJECTION_DELIMITER] && lexer->lookahead == '~') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '~') {
+      lexer->advance(lexer, false);
+      lexer->mark_end(lexer);
+      lexer->result_symbol = INJECTION_DELIMITER;
+      return true;
+    }
+    return false;
   }
 
   if (valid_symbols[VERSION_PREFIX] && (lexer->lookahead == '^' || lexer->lookahead == '~')) {

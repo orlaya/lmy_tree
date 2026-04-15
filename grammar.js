@@ -19,6 +19,8 @@ export default grammar({
     $.version_dash,
     $.version_tag,
     $.number,
+    $.language_tag,
+    $.injection_delimiter,
     $.error_sentinel,
   ],
 
@@ -134,6 +136,11 @@ export default grammar({
     )),
 
     _value: $ => choice(
+      seq($.language_tag, $.injection_delimiter, $._injectable_value),
+      $._injectable_value,
+    ),
+
+    _injectable_value: $ => choice(
       $.multiline_fold,
       $.multiline_preserve,
       $.array,
@@ -147,6 +154,11 @@ export default grammar({
     array: $ => prec(1, seq('[', commaSep($._array_value), ']')),
 
     _array_value: $ => choice(
+      seq($.language_tag, $.injection_delimiter, $._injectable_array_value),
+      $._injectable_array_value,
+    ),
+
+    _injectable_array_value: $ => choice(
       $.array,
       $.string,
       $.boolean,
@@ -157,10 +169,11 @@ export default grammar({
 
     array_raw_value: $ => prec(-1, repeat1(choice(
       $.variable,
-      /[^,$*\/\n\r\[\]]+/,
+      /[^,$*\/~\n\r\[\]]+/,
       '/',
       '$',
       '*',
+      '~',
     ))),
 
     variable: $ => seq(
@@ -172,17 +185,19 @@ export default grammar({
     raw_value: $ => prec(-1, seq(
       choice(
         $.variable,
-        /[^ \t$*\/\n\r\[]+/,
+        /[^ \t$*\/~\n\r\[]+/,
         '/',
         '$',
         '*',
+        '~',
       ),
       repeat(choice(
         $.variable,
-        /[^$*\/\n\r]+/,
+        /[^$*\/~\n\r]+/,
         '/',
         '$',
         '*',
+        '~',
       )),
     )),
 
