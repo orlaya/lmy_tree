@@ -116,7 +116,7 @@
 ;
 ; Language injection
 ; ————————————————————————
-(language_tag) @label
+(language_tag) @punctuation
 (injection_delimiter) @punctuation
 
 
