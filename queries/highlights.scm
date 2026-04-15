@@ -92,10 +92,9 @@
 ; Arrays
 ; ————————————————————————
 
-(array
-  "[" @punctuation.bracket
-  "," @punctuation.delimiter
-  "]" @punctuation.bracket)
+(array "[" @punctuation.bracket)
+(array "]" @punctuation.bracket)
+(array "," @punctuation.delimiter)
 
 
 ;
