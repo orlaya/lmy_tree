@@ -108,7 +108,7 @@
 
 ; Version parts
 (version_prefix) @operator
-(version_digits) @boolean
+(version_digits) @string
 (version_dot) @punctuation.delimiter
 (version_dash) @punctuation.delimiter
 (version_tag) @string.special
