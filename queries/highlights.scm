@@ -107,7 +107,8 @@
 ; Variables
 ; ————————————————————————
 (variable_dollar) @punctuation.special
-(variable_qualifier) @property
+(variable_qualifier) @variable
+; (variable_qualifier) @property
 (variable_dot) @punctuation.delimiter
 (variable_segment) @variable
 
