@@ -4,16 +4,16 @@
 ; ————————————————————————
 
 (assignment
-  value: (language_tag) @injection.language
-  value: (raw_value) @injection.content)
+  (language_tag) @injection.language
+  (raw_value) @injection.content)
 
 (assignment
-  value: (language_tag) @injection.language
-  value: (multiline_fold) @injection.content)
+  (language_tag) @injection.language
+  (multiline_fold) @injection.content)
 
 (assignment
-  value: (language_tag) @injection.language
-  value: (multiline_preserve) @injection.content)
+  (language_tag) @injection.language
+  (multiline_preserve) @injection.content)
 
 
 ;
