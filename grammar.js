@@ -137,7 +137,7 @@ export default grammar({
       $.raw_value,
     ),
 
-    array: $ => seq('[', commaSep($._value), ']'),
+    array: $ => prec(1, seq('[', commaSep($._value), ']')),
 
     variable: $ => seq(
       $.variable_dollar,
