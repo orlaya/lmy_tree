@@ -1,5 +1,48 @@
 [
   {
+    "type": "array",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "multiline_fold",
+          "named": true
+        },
+        {
+          "type": "multiline_preserve",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "raw_value",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "version",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "assignment",
     "named": true,
     "fields": {
@@ -17,6 +60,10 @@
         "multiple": false,
         "required": false,
         "types": [
+          {
+            "type": "array",
+            "named": true
+          },
           {
             "type": "boolean",
             "named": true
@@ -87,6 +134,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "array",
+          "named": true
+        },
         {
           "type": "boolean",
           "named": true

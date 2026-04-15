@@ -129,12 +129,15 @@ export default grammar({
     _value: $ => choice(
       $.multiline_fold,
       $.multiline_preserve,
+      $.array,
       $.string,
       $.boolean,
       $.version,
       $.number,
       $.raw_value,
     ),
+
+    array: $ => seq('[', commaSep($._value), ']'),
 
     variable: $ => seq(
       $.variable_dollar,

@@ -89,6 +89,17 @@
 
 ;
 ;
+; Arrays
+; ————————————————————————
+
+(array
+  "[" @punctuation.bracket
+  "," @punctuation.delimiter
+  "]" @punctuation.bracket)
+
+
+;
+;
 ; Variables
 ; ————————————————————————
 (variable_dollar) @punctuation.special
