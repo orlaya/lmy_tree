@@ -9,11 +9,11 @@
 
 (assignment
   (language_tag) @injection.language
-  (multiline_fold) @injection.content)
+  (multiline_fold (fold_body) @injection.content))
 
 (assignment
   (language_tag) @injection.language
-  (multiline_preserve) @injection.content)
+  (multiline_preserve (preserve_body) @injection.content))
 
 
 ;
@@ -27,8 +27,8 @@
 
 (list_item
   (language_tag) @injection.language
-  (multiline_fold) @injection.content)
+  (multiline_fold (fold_body) @injection.content))
 
 (list_item
   (language_tag) @injection.language
-  (multiline_preserve) @injection.content)
+  (multiline_preserve (preserve_body) @injection.content))

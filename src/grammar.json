@@ -358,7 +358,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_line_content"
+              "name": "fold_body"
             },
             {
               "type": "BLANK"
@@ -366,34 +366,42 @@
           ]
         },
         {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "\\r?\\n"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_line_content"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
           "type": "SYMBOL",
           "name": "fold_close"
         }
       ]
+    },
+    "fold_body": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "variable"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^$*\\/\\n\\r]+"
+          },
+          {
+            "type": "STRING",
+            "value": "/"
+          },
+          {
+            "type": "STRING",
+            "value": "$"
+          },
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\r?\\n"
+          }
+        ]
+      }
     },
     "multiline_preserve": {
       "type": "SEQ",
@@ -407,7 +415,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_line_content"
+              "name": "preserve_body"
             },
             {
               "type": "BLANK"
@@ -415,34 +423,42 @@
           ]
         },
         {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "\\r?\\n"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_line_content"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
           "type": "SYMBOL",
           "name": "preserve_delimiter"
         }
       ]
+    },
+    "preserve_body": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "variable"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^$*\\/\\n\\r]+"
+          },
+          {
+            "type": "STRING",
+            "value": "/"
+          },
+          {
+            "type": "STRING",
+            "value": "$"
+          },
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\r?\\n"
+          }
+        ]
+      }
     },
     "_line_content": {
       "type": "REPEAT1",

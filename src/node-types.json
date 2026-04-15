@@ -131,6 +131,21 @@
     "fields": {}
   },
   {
+    "type": "fold_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "import_statement",
     "named": true,
     "fields": {},
@@ -209,15 +224,15 @@
       "required": true,
       "types": [
         {
+          "type": "fold_body",
+          "named": true
+        },
+        {
           "type": "fold_close",
           "named": true
         },
         {
           "type": "fold_open",
-          "named": true
-        },
-        {
-          "type": "variable",
           "named": true
         }
       ]
@@ -232,9 +247,24 @@
       "required": true,
       "types": [
         {
-          "type": "preserve_delimiter",
+          "type": "preserve_body",
           "named": true
         },
+        {
+          "type": "preserve_delimiter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preserve_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
         {
           "type": "variable",
           "named": true

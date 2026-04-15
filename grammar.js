@@ -115,17 +115,33 @@ export default grammar({
 
     multiline_fold: $ => seq(
       $.fold_open,
-      optional($._line_content),
-      repeat(seq(/\r?\n/, optional($._line_content))),
+      optional($.fold_body),
       $.fold_close,
     ),
 
+    fold_body: $ => repeat1(choice(
+      $.variable,
+      /[^$*\/\n\r]+/,
+      '/',
+      '$',
+      '*',
+      /\r?\n/,
+    )),
+
     multiline_preserve: $ => seq(
       $.preserve_delimiter,
-      optional($._line_content),
-      repeat(seq(/\r?\n/, optional($._line_content))),
+      optional($.preserve_body),
       $.preserve_delimiter,
     ),
+
+    preserve_body: $ => repeat1(choice(
+      $.variable,
+      /[^$*\/\n\r]+/,
+      '/',
+      '$',
+      '*',
+      /\r?\n/,
+    )),
 
     _line_content: $ => repeat1(choice(
       $.variable,

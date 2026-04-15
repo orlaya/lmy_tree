@@ -143,10 +143,10 @@
 ; ————————————————————————
 (fold_open) @punctuation
 (fold_close) @punctuation
-(multiline_fold) @string
+(fold_body) @string
 
-(preserve_delimiter) @punctuation ; was @operator
-(multiline_preserve) @string
+(preserve_delimiter) @punctuation
+(preserve_body) @string
 
 
 ;
