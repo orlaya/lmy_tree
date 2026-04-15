@@ -210,7 +210,7 @@ bool tree_sitter_lmy_external_scanner_scan(
   }
 
   if ((valid_symbols[VERSION_DIGITS] || valid_symbols[NUMBER]) && is_digit(lexer->lookahead)) {
-    while (is_digit(lexer->lookahead)) {
+    while (is_digit(lexer->lookahead) || lexer->lookahead == '_') {
       lexer->advance(lexer, false);
     }
     lexer->mark_end(lexer);
@@ -221,7 +221,7 @@ bool tree_sitter_lmy_external_scanner_scan(
       if (lexer->lookahead == '.') {
         lexer->advance(lexer, false);
         if (is_digit(lexer->lookahead)) {
-          while (is_digit(lexer->lookahead)) lexer->advance(lexer, false);
+          while (is_digit(lexer->lookahead) || lexer->lookahead == '_') lexer->advance(lexer, false);
           if (lexer->lookahead == '.') {
             // Two dots confirmed — this is a version
             if (valid_symbols[VERSION_DIGITS]) {
