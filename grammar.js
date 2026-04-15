@@ -27,10 +27,6 @@ export default grammar({
     $.comment,
   ],
 
-  conflicts: $ => [
-    [$.array, $.raw_value],
-  ],
-
   rules: {
     source_file: $ => repeat(choice($._definition, '}', /\r?\n/)),
 
@@ -149,16 +145,22 @@ export default grammar({
       $.variable_segment,
     ),
 
-    raw_value: $ => prec(-1, repeat1(choice(
-      $.variable,
-      /[^$*\/\n\r\[\],]+/,
-      '/',
-      '$',
-      '*',
-      '[',
-      ']',
-      ',',
-    ))),
+    raw_value: $ => prec(-1, seq(
+      choice(
+        $.variable,
+        /[^$*\/\n\r\[]+/,
+        '/',
+        '$',
+        '*',
+      ),
+      repeat(choice(
+        $.variable,
+        /[^$*\/\n\r]+/,
+        '/',
+        '$',
+        '*',
+      )),
+    )),
 
     // "quoted string"
     string: $ => /"[^"]*"/,
