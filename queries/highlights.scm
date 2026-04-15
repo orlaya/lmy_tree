@@ -141,3 +141,4 @@
 ;
 ; ————————————————————————
 (raw_value) @string
+(array_raw_value) @string

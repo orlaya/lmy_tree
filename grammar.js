@@ -137,7 +137,24 @@ export default grammar({
       $.raw_value,
     ),
 
-    array: $ => prec(1, seq('[', commaSep($._value), ']')),
+    array: $ => prec(1, seq('[', commaSep($._array_value), ']')),
+
+    _array_value: $ => choice(
+      $.array,
+      $.string,
+      $.boolean,
+      $.version,
+      $.number,
+      $.array_raw_value,
+    ),
+
+    array_raw_value: $ => prec(-1, repeat1(choice(
+      $.variable,
+      /[^,$*\/\n\r\[\]]+/,
+      '/',
+      '$',
+      '*',
+    ))),
 
     variable: $ => seq(
       $.variable_dollar,
