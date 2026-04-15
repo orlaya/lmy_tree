@@ -27,6 +27,10 @@ export default grammar({
     $.comment,
   ],
 
+  conflicts: $ => [
+    [$.array, $.raw_value],
+  ],
+
   rules: {
     source_file: $ => repeat(choice($._definition, '}', /\r?\n/)),
 
@@ -147,10 +151,13 @@ export default grammar({
 
     raw_value: $ => prec(-1, repeat1(choice(
       $.variable,
-      /[^$*\/\n\r]+/,
+      /[^$*\/\n\r\[\],]+/,
       '/',
       '$',
       '*',
+      '[',
+      ']',
+      ',',
     ))),
 
     // "quoted string"

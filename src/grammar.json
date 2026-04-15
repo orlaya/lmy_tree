@@ -557,7 +557,7 @@
             },
             {
               "type": "PATTERN",
-              "value": "[^$*\\/\\n\\r]+"
+              "value": "[^$*\\/\\n\\r\\[\\],]+"
             },
             {
               "type": "STRING",
@@ -570,6 +570,18 @@
             {
               "type": "STRING",
               "value": "*"
+            },
+            {
+              "type": "STRING",
+              "value": "["
+            },
+            {
+              "type": "STRING",
+              "value": "]"
+            },
+            {
+              "type": "STRING",
+              "value": ","
             }
           ]
         }
@@ -698,7 +710,12 @@
       "name": "comment"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "array",
+      "raw_value"
+    ]
+  ],
   "precedences": [],
   "externals": [
     {
