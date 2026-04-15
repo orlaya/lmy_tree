@@ -236,10 +236,25 @@ bool tree_sitter_lmy_external_scanner_scan(
         // Dot not followed by digit — mark_end stays at initial digits
       }
 
-      // If followed by a letter, it's not a standalone number (e.g. 45.88kg)
+      // Number must be the whole value — reject if followed by letters (45.88kg)
+      // or if followed by space+text (5 inches)
       if (valid_symbols[NUMBER] && !is_segment_start(lexer->lookahead)) {
-        lexer->result_symbol = NUMBER;
-        return true;
+        if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+          // Peek past whitespace to check what follows
+          while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+            lexer->advance(lexer, false);
+          }
+          // Only emit NUMBER if line ends or comment follows
+          if (lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+              lexer->lookahead == '/' || lexer->eof(lexer)) {
+            lexer->result_symbol = NUMBER;
+            return true;
+          }
+        } else if (lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+                   lexer->lookahead == '/' || lexer->eof(lexer)) {
+          lexer->result_symbol = NUMBER;
+          return true;
+        }
       }
       return false;
     }
