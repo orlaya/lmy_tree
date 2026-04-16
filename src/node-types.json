@@ -258,6 +258,44 @@
     }
   },
   {
+    "type": "path",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "path_alias_prefix",
+          "named": true
+        },
+        {
+          "type": "path_body",
+          "named": true
+        },
+        {
+          "type": "path_relative_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "path_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "path_segment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preserve_body",
     "named": true,
     "fields": {},
@@ -579,7 +617,15 @@
     "named": true
   },
   {
-    "type": "path",
+    "type": "path_alias_prefix",
+    "named": true
+  },
+  {
+    "type": "path_relative_prefix",
+    "named": true
+  },
+  {
+    "type": "path_segment",
     "named": true
   },
   {

@@ -52,23 +52,31 @@
 ; Statements
 ; ————————————————————————
 
+; Path pieces (used by both verify and import)
+(path
+  (path_body
+    (path_segment) @string.special))
+(path
+  (path_body
+    "/" @punctuation.delimiter))
+(path
+  (path_alias_prefix) @operator)
+(path
+  (path_relative_prefix) @punctuation.special)
+
 ; verify ombre::{ PNPM_CATALOGS, PNPM_SETTINGS }
-(verify_statement
-  (path) @string.special
-  "::" @operator
-  "{" @punctuation.bracket
-  (identifier) @title
-  "}" @punctuation.bracket)
+(verify_statement "::" @operator)
+(verify_statement "{" @punctuation.bracket)
+(verify_statement "}" @punctuation.bracket)
 (verify_statement "," @punctuation.delimiter)
+(verify_statement (identifier) @title)
 
 ; import vite::{defineConfig}
-(import_statement
-  (path) @string.special
-  "::" @operator
-  "{" @punctuation.bracket
-  (identifier) @variable
-  "}" @punctuation.bracket)
+(import_statement "::" @operator)
+(import_statement "{" @punctuation.bracket)
+(import_statement "}" @punctuation.bracket)
 (import_statement "," @punctuation.delimiter)
+(import_statement (identifier) @variable)
 
 
 ;

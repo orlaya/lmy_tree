@@ -75,24 +75,32 @@ export default grammar({
     // ────────────────────────────────
 
     // verify ombre::{ PNPM_CATALOGS, PNPM_SETTINGS }
-    verify_statement: $ => seq(
+    verify_statement: $ => prec.right(seq(
       'verify',
       $.path,
-      '::',
-      '{',
-      commaSep($.identifier),
-      '}',
-    ),
+      optional(seq(
+        '::',
+        optional(seq(
+          '{',
+          commaSep($.identifier),
+          optional('}'),
+        )),
+      )),
+    )),
 
     // import vite::{defineConfig}
-    import_statement: $ => seq(
+    import_statement: $ => prec.right(seq(
       'import',
       $.path,
-      '::',
-      '{',
-      commaSep($.identifier),
-      '}',
-    ),
+      optional(seq(
+        '::',
+        optional(seq(
+          '{',
+          commaSep($.identifier),
+          optional('}'),
+        )),
+      )),
+    )),
 
     // name: orlaya  OR  catalogs: (value optional for list headers)
     // prec.right = prefer to grab the value when there's ambiguity
@@ -237,8 +245,26 @@ export default grammar({
       )),
     ),
 
-    // Path for imports/verify (allows @ prefix for npm scopes)
-    path: $ => /@?[a-zA-Z_][\w\-\/]*/,
+    // Path for imports/verify.
+    //   file/path                 — regular
+    //   ./file/path, ../file/path — relative (. or .. max)
+    //   #/aliased/path            — alias (# highlighted specially)
+    // Prefixes separate so each highlights distinctly; slashes split out as
+    // their own tokens so they colour as punctuation, not body text.
+    // Tolerates mid-typing states: bare `#`, `./`, trailing slashes, etc.
+    path: $ => choice(
+      seq($.path_alias_prefix, optional($.path_body)),
+      seq($.path_relative_prefix, optional($.path_body)),
+      $.path_body,
+    ),
+
+    path_alias_prefix: $ => '#',
+    path_relative_prefix: $ => /\.\.?/,
+    path_body: $ => choice(
+      seq('/', optional(seq($.path_segment, repeat(seq('/', optional($.path_segment)))))),
+      seq($.path_segment, repeat(seq('/', optional($.path_segment)))),
+    ),
+    path_segment: $ => /[\w@][\w\-.@]*/,
 
     // ─────────────────────────────────────────────
     // Identifier - the tricky one
