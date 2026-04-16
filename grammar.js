@@ -218,7 +218,7 @@ export default grammar({
     )),
 
     // "quoted string"
-    string: $ => /"[^"]*"/,
+    string: $ => /"[^"\n]*"/,
 
     // true / false
     boolean: $ => choice('true', 'false'),

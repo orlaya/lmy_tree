@@ -872,7 +872,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 3:
       if (lookahead == '"') ADVANCE(110);
-      if (lookahead != 0) ADVANCE(3);
+      if (lookahead != 0 &&
+          lookahead != '\n') ADVANCE(3);
       END_STATE();
     case 4:
       ADVANCE_MAP(
@@ -1314,7 +1315,6 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(aux_sym_array_raw_value_token1);
       ADVANCE_MAP(
         '"', 62,
-        '\n', 3,
         '\r', 3,
         '$', 3,
         '*', 3,
@@ -1324,7 +1324,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         ']', 3,
         '~', 3,
       );
-      if (lookahead != 0) ADVANCE(53);
+      if (lookahead != 0 &&
+          lookahead != '\n') ADVANCE(53);
       END_STATE();
     case 54:
       ACCEPT_TOKEN(aux_sym_array_raw_value_token1);
@@ -1379,7 +1380,6 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ADVANCE_MAP(
         '"', 93,
         '\t', 3,
-        '\n', 3,
         '\r', 3,
         ' ', 3,
         '$', 3,
@@ -1388,7 +1388,9 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '[', 3,
         '~', 3,
       );
-      if (lookahead != 0) ADVANCE(64);
+      if (lookahead != 0 &&
+          lookahead != '\t' &&
+          lookahead != '\n') ADVANCE(64);
       END_STATE();
     case 65:
       ACCEPT_TOKEN(aux_sym_raw_value_token1);
