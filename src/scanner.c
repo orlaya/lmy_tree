@@ -17,6 +17,7 @@ enum TokenType {
   NUMBER,              // 34 or 45.70
   LANGUAGE_TAG,        // sh, py, js, sql etc (before ~~)
   INJECTION_DELIMITER, // ~~
+  DONE_MARKER,         // xx (done list item prefix)
   ERROR_SENTINEL,
 };
 
@@ -148,6 +149,23 @@ bool tree_sitter_lmy_external_scanner_scan(
 
   while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
     lexer->advance(lexer, true);
+  }
+
+  // ── Done marker: xx (must come before KEY to avoid xx being eaten as a key) ──
+  // Only match exactly "xx" followed by whitespace — anything else falls through
+  // to KEY/identifier so that xx:, xx::, xxl etc all work normally.
+
+  if (valid_symbols[DONE_MARKER] && lexer->lookahead == 'x') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == 'x') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->mark_end(lexer);
+        lexer->result_symbol = DONE_MARKER;
+        return true;
+      }
+    }
+    // Not xx + whitespace — fall through to KEY/identifier handling
   }
 
   if (valid_symbols[KEY] && column_before_skip == 0) {

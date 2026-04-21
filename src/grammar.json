@@ -56,6 +56,10 @@
         {
           "type": "SYMBOL",
           "name": "list_item"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "done_item"
         }
       ]
     },
@@ -402,6 +406,19 @@
         {
           "type": "STRING",
           "value": "--"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_value"
+        }
+      ]
+    },
+    "done_item": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "done_marker"
         },
         {
           "type": "SYMBOL",
@@ -1203,6 +1220,10 @@
     {
       "type": "SYMBOL",
       "name": "injection_delimiter"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "done_marker"
     },
     {
       "type": "SYMBOL",

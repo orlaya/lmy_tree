@@ -99,6 +99,10 @@
 (list_item
   "--" @punctuation)
 
+; xx done!
+(done_item
+  (done_marker) @punctuation.special)
+
 
 ;
 ;

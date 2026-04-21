@@ -131,6 +131,61 @@
     "fields": {}
   },
   {
+    "type": "done_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "done_marker",
+          "named": true
+        },
+        {
+          "type": "injection_delimiter",
+          "named": true
+        },
+        {
+          "type": "language_tag",
+          "named": true
+        },
+        {
+          "type": "multiline_fold",
+          "named": true
+        },
+        {
+          "type": "multiline_preserve",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "raw_value",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "version",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "fold_body",
     "named": true,
     "fields": {},
@@ -349,6 +404,10 @@
           "named": true
         },
         {
+          "type": "done_item",
+          "named": true
+        },
+        {
           "type": "import_statement",
           "named": true
         },
@@ -426,6 +485,10 @@
       "types": [
         {
           "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "done_item",
           "named": true
         },
         {
@@ -579,6 +642,10 @@
   {
     "type": "aka",
     "named": false
+  },
+  {
+    "type": "done_marker",
+    "named": true
   },
   {
     "type": "false",

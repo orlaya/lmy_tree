@@ -21,6 +21,7 @@ export default grammar({
     $.number,
     $.language_tag,
     $.injection_delimiter,
+    $.done_marker,
     $.error_sentinel,
   ],
 
@@ -41,6 +42,7 @@ export default grammar({
       $.scope_return,
       $.assignment,
       $.list_item,
+      $.done_item,
     ),
 
     //
@@ -112,6 +114,9 @@ export default grammar({
 
     // -- coreWorkspace
     list_item: $ => seq('--', $._value),
+
+    // xx done!
+    done_item: $ => seq($.done_marker, $._value),
 
     // // comment text
     comment: $ => seq('//', /.*/),

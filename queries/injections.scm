@@ -32,3 +32,21 @@
 (list_item
   (language_tag) @injection.language
   (multiline_preserve (preserve_body) @injection.content))
+
+
+;
+;
+; Done items
+; ————————————————————————
+
+(done_item
+  (language_tag) @injection.language
+  (raw_value) @injection.content)
+
+(done_item
+  (language_tag) @injection.language
+  (multiline_fold (fold_body) @injection.content))
+
+(done_item
+  (language_tag) @injection.language
+  (multiline_preserve (preserve_body) @injection.content))
