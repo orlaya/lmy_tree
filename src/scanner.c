@@ -151,26 +151,9 @@ bool tree_sitter_lmy_external_scanner_scan(
     lexer->advance(lexer, true);
   }
 
-  // ── Done marker: xx (must come before KEY to avoid xx being eaten as a key) ──
-  // Only match exactly "xx" followed by whitespace — anything else falls through
-  // to KEY/identifier so that xx:, xx::, xxl etc all work normally.
-
-  if (valid_symbols[DONE_MARKER] && lexer->lookahead == 'x') {
-    lexer->advance(lexer, false);
-    if (lexer->lookahead == 'x') {
-      lexer->advance(lexer, false);
-      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-        lexer->mark_end(lexer);
-        lexer->result_symbol = DONE_MARKER;
-        return true;
-      }
-    }
-    // Not xx + whitespace — fall through to KEY/identifier handling
-  }
-
-  if (valid_symbols[KEY] && column_before_skip == 0) {
+  if ((valid_symbols[KEY] || valid_symbols[DONE_MARKER]) && column_before_skip == 0) {
     // Quoted key: "something":
-    if (lexer->lookahead == '"') {
+    if (valid_symbols[KEY] && lexer->lookahead == '"') {
       lexer->advance(lexer, false);
       while (lexer->lookahead != '"' && lexer->lookahead != '\n' && !lexer->eof(lexer)) {
         lexer->advance(lexer, false);
@@ -188,14 +171,24 @@ bool tree_sitter_lmy_external_scanner_scan(
       return false;
     }
 
-    // Bare key: something:
+    // Bare key or done marker — both start with alpha at column 0.
+    // Read the identifier, then decide: trailing colon → KEY, exactly "xx" + whitespace → DONE_MARKER.
     if (is_key_start(lexer->lookahead)) {
+      int32_t first_char = lexer->lookahead;
+      int char_count = 0;
+      int32_t second_char = 0;
+
       lexer->advance(lexer, false);
+      char_count++;
+      if (char_count == 1) second_char = lexer->lookahead;
+
       while (is_key_char(lexer->lookahead)) {
         lexer->advance(lexer, false);
+        char_count++;
       }
       lexer->mark_end(lexer);
 
+      // Try KEY first: look for trailing colon
       bool found_trailing_colon = false;
       while (lexer->lookahead == ':') {
         lexer->advance(lexer, false);
@@ -212,9 +205,20 @@ bool tree_sitter_lmy_external_scanner_scan(
       }
 
       if (found_trailing_colon && lexer->lookahead != ':') {
-        lexer->result_symbol = KEY;
+        if (valid_symbols[KEY]) {
+          lexer->result_symbol = KEY;
+          return true;
+        }
+      }
+
+      // Not a key — check for done marker: exactly "xx" followed by whitespace
+      if (valid_symbols[DONE_MARKER] &&
+          char_count == 2 && first_char == 'x' && second_char == 'x' &&
+          (lexer->lookahead == ' ' || lexer->lookahead == '\t')) {
+        lexer->result_symbol = DONE_MARKER;
         return true;
       }
+
       return false;
     }
   }
