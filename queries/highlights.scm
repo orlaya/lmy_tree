@@ -153,7 +153,7 @@
 (string) @string
 (boolean) @boolean
 (number) @number
-"*" @punctuation.special
+(emphasis_open) @punctuation.special
 
 ; Version parts
 (version_prefix) @operator
