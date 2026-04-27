@@ -55,10 +55,6 @@
           "named": true
         },
         {
-          "type": "emphasis_open",
-          "named": true
-        },
-        {
           "type": "inline_code",
           "named": true
         },
@@ -260,10 +256,6 @@
           "named": true
         },
         {
-          "type": "emphasis_open",
-          "named": true
-        },
-        {
           "type": "inline_code",
           "named": true
         },
@@ -441,10 +433,6 @@
           "named": true
         },
         {
-          "type": "emphasis_open",
-          "named": true
-        },
-        {
           "type": "inline_code",
           "named": true
         },
@@ -469,10 +457,6 @@
       "types": [
         {
           "type": "emphasis",
-          "named": true
-        },
-        {
-          "type": "emphasis_open",
           "named": true
         },
         {
@@ -836,10 +820,6 @@
   },
   {
     "type": "emphasis_delimiter",
-    "named": true
-  },
-  {
-    "type": "emphasis_open",
     "named": true
   },
   {

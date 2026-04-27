@@ -104,6 +104,23 @@ void tree_sitter_lmy_external_scanner_deserialize(void *payload, const char *buf
 //   LAST_TOKEN_PUNCTUATION — grammar places optional($._last_token_punctuation)
 //                            after punctuation-producing positions
 // These phantom tokens never actually match input; they just signal context.
+
+// Peek ahead (without consuming) to check if there's a closing * on this line.
+// Returns true if a matching * is found before line end.
+static bool has_closing_star_on_line(TSLexer *lexer) {
+  // We're positioned right after the opening star(s), looking at the first
+  // content char. Scan forward for a * that isn't immediately followed by
+  // whitespace (which would make it a valid right-flanking delimiter).
+  while (lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
+         !lexer->eof(lexer)) {
+    if (lexer->lookahead == '*') {
+      return true;
+    }
+    lexer->advance(lexer, false);
+  }
+  return false;
+}
+
 static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols) {
   lexer->advance(lexer, false);
 
@@ -154,11 +171,17 @@ static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols
 
   // Opening (left-flanking): next char is not whitespace, and either next
   // is not punctuation, or previous was punctuation/whitespace.
+  // Extra guard: only commit if there's a closing * on this line.
+  // If not, return false so the grammar's '*' literal handles it as plain text.
   if (valid_symbols[EMPHASIS_OPEN] &&
       !next_whitespace &&
       (!next_punctuation ||
        valid_symbols[LAST_TOKEN_PUNCTUATION] ||
        valid_symbols[LAST_TOKEN_WHITESPACE])) {
+    if (!has_closing_star_on_line(lexer)) {
+      s->num_emphasis_delimiters_left = 0;
+      return false;
+    }
     s->state |= STATE_EMPHASIS_DELIMITER_IS_OPEN;
     lexer->result_symbol = EMPHASIS_OPEN;
     return true;
