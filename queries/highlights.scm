@@ -97,11 +97,15 @@
 
 ; -- coreWorkspace
 (list_item
-  "--" @punctuation)
+  (list_marker) @punctuation)
 
 ; xx done!
 (done_item
   (done_marker) @punctuation.special)
+
+; == in progress
+(in_progress_item
+  (in_progress_marker) @punctuation.special)
 
 
 ;

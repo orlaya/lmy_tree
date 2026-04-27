@@ -63,6 +63,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "in_progress_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "tilde_block"
         }
       ]
@@ -408,8 +412,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "--"
+          "type": "SYMBOL",
+          "name": "list_marker"
         },
         {
           "type": "SYMBOL",
@@ -423,6 +427,19 @@
         {
           "type": "SYMBOL",
           "name": "done_marker"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_value"
+        }
+      ]
+    },
+    "in_progress_item": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "in_progress_marker"
         },
         {
           "type": "SYMBOL",
@@ -755,6 +772,18 @@
               {
                 "type": "SYMBOL",
                 "name": "fenced_code_block"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "list_item"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "done_item"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "in_progress_item"
               },
               {
                 "type": "SYMBOL",
@@ -1278,7 +1307,7 @@
       ]
     },
     "raw_value": {
-      "type": "PREC",
+      "type": "PREC_RIGHT",
       "value": -1,
       "content": {
         "type": "SEQ",
@@ -2113,6 +2142,14 @@
     {
       "type": "SYMBOL",
       "name": "done_marker"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "list_marker"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "in_progress_marker"
     },
     {
       "type": "SYMBOL",

@@ -371,6 +371,61 @@
     }
   },
   {
+    "type": "in_progress_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "in_progress_marker",
+          "named": true
+        },
+        {
+          "type": "injection_delimiter",
+          "named": true
+        },
+        {
+          "type": "language_tag",
+          "named": true
+        },
+        {
+          "type": "multiline_fold",
+          "named": true
+        },
+        {
+          "type": "multiline_preserve",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "raw_value",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "version",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "list_item",
     "named": true,
     "fields": {},
@@ -392,6 +447,10 @@
         },
         {
           "type": "language_tag",
+          "named": true
+        },
+        {
+          "type": "list_marker",
           "named": true
         },
         {
@@ -600,6 +659,10 @@
           "named": true
         },
         {
+          "type": "in_progress_item",
+          "named": true
+        },
+        {
           "type": "list_item",
           "named": true
         },
@@ -685,6 +748,10 @@
         },
         {
           "type": "import_statement",
+          "named": true
+        },
+        {
+          "type": "in_progress_item",
           "named": true
         },
         {
@@ -784,6 +851,10 @@
       "required": false,
       "types": [
         {
+          "type": "done_item",
+          "named": true
+        },
+        {
           "type": "emphasis_multiline",
           "named": true
         },
@@ -800,7 +871,15 @@
           "named": true
         },
         {
+          "type": "in_progress_item",
+          "named": true
+        },
+        {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "list_item",
           "named": true
         },
         {
@@ -908,10 +987,6 @@
     "named": false
   },
   {
-    "type": "--",
-    "named": false
-  },
-  {
     "type": "/",
     "named": false
   },
@@ -996,6 +1071,10 @@
     "named": false
   },
   {
+    "type": "in_progress_marker",
+    "named": true
+  },
+  {
     "type": "injection_delimiter",
     "named": true
   },
@@ -1009,6 +1088,10 @@
   },
   {
     "type": "language_tag",
+    "named": true
+  },
+  {
+    "type": "list_marker",
     "named": true
   },
   {

@@ -22,6 +22,8 @@ export default grammar({
     $.language_tag,
     $.injection_delimiter,
     $.done_marker,
+    $.list_marker,
+    $.in_progress_marker,
     $.tilde_delimiter,
     $.heading_marker,
     $.fenced_code_delimiter,
@@ -73,6 +75,7 @@ export default grammar({
       $.assignment,
       $.list_item,
       $.done_item,
+      $.in_progress_item,
       $.tilde_block,
     ),
 
@@ -144,10 +147,13 @@ export default grammar({
     )),
 
     // -- coreWorkspace
-    list_item: $ => seq('--', $._value),
+    list_item: $ => seq($.list_marker, $._value),
 
     // xx done!
     done_item: $ => seq($.done_marker, $._value),
+
+    // == in progress
+    in_progress_item: $ => seq($.in_progress_marker, $._value),
 
     // // comment text
     comment: $ => seq('//', /.*/),
@@ -210,6 +216,9 @@ export default grammar({
     tilde_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
       $.heading,
       $.fenced_code_block,
+      $.list_item,
+      $.done_item,
+      $.in_progress_item,
       $.strong_emphasis_multiline,
       $.emphasis_multiline,
       $.inline_code,
@@ -313,7 +322,7 @@ export default grammar({
       $.variable_segment,
     ),
 
-    raw_value: $ => prec(-1, seq(
+    raw_value: $ => prec.right(-1, seq(
       optional($._last_token_whitespace),
       choice(
         $.strong_emphasis,

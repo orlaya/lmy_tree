@@ -18,6 +18,8 @@ enum TokenType {
   LANGUAGE_TAG,        // sh, py, js, sql etc (before ~~)
   INJECTION_DELIMITER, // ~~
   DONE_MARKER,         // xx (done list item prefix)
+  LIST_MARKER,         // -- (list item prefix)
+  IN_PROGRESS_MARKER,  // == (in-progress item prefix)
   TILDE_DELIMITER,     // ~~~
   HEADING_MARKER,      // # through ###### at column 0 followed by space
   FENCED_CODE_DELIMITER, // ``` (exactly three backticks)
@@ -442,6 +444,36 @@ bool tree_sitter_lmy_external_scanner_scan(
 
       return false;
     }
+  }
+
+  // ── List marker: -- at column 0 followed by space/tab ──
+  if (valid_symbols[LIST_MARKER] && column_before_skip == 0 &&
+      lexer->lookahead == '-') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '-') {
+      lexer->advance(lexer, false);
+      lexer->mark_end(lexer);
+      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->result_symbol = LIST_MARKER;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // ── In-progress marker: == at column 0 followed by space/tab ──
+  if (valid_symbols[IN_PROGRESS_MARKER] && column_before_skip == 0 &&
+      lexer->lookahead == '=') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '=') {
+      lexer->advance(lexer, false);
+      lexer->mark_end(lexer);
+      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->result_symbol = IN_PROGRESS_MARKER;
+        return true;
+      }
+    }
+    return false;
   }
 
   // ── Heading marker: # through ###### at column 0 ──
