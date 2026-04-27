@@ -406,6 +406,11 @@
     }
   },
   {
+    "type": "path_alias_prefix",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "path_body",
     "named": true,
     "fields": {},
@@ -690,6 +695,33 @@
     }
   },
   {
+    "type": "tilde_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "emphasis_multiline",
+          "named": true
+        },
+        {
+          "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "strong_emphasis_multiline",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "variable",
     "named": true,
     "fields": {},
@@ -765,6 +797,10 @@
         }
       ]
     }
+  },
+  {
+    "type": "#",
+    "named": false
   },
   {
     "type": "$",
@@ -863,10 +899,6 @@
     "named": true
   },
   {
-    "type": "path_alias_prefix",
-    "named": true
-  },
-  {
     "type": "path_relative_prefix",
     "named": true
   },
@@ -880,10 +912,6 @@
   },
   {
     "type": "string",
-    "named": true
-  },
-  {
-    "type": "tilde_body",
     "named": true
   },
   {

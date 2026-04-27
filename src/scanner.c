@@ -19,7 +19,6 @@ enum TokenType {
   INJECTION_DELIMITER, // ~~
   DONE_MARKER,         // xx (done list item prefix)
   TILDE_DELIMITER,     // ~~~
-  TILDE_BODY,          // content between ~~~ markers (opaque for injection)
   EMPHASIS_OPEN,               // * or ** opening — single-line (peeks for close)
   EMPHASIS_CLOSE,              // * or ** closing — single-line
   EMPHASIS_OPEN_MULTILINE,     // * or ** opening — multi-line (no peek)
@@ -284,56 +283,6 @@ bool tree_sitter_lmy_external_scanner_scan(
     lexer->mark_end(lexer);
     lexer->result_symbol = VERSION_TAG;
     return true;
-  }
-
-  // ── Tilde body: consume everything between ~~~ markers ──
-  // Must be before whitespace skip — body includes its own whitespace.
-
-  if (valid_symbols[TILDE_BODY]) {
-    // We're right after the grammar matched the opening ~~~ and its newline.
-    // Consume lines until we find one that is just ~~~.
-    bool has_content = false;
-
-    while (!lexer->eof(lexer)) {
-      // Mark at start of each line — if this line is the closing ~~~,
-      // the body ends here (just before this line).
-      lexer->mark_end(lexer);
-
-      // Skip leading whitespace
-      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-        lexer->advance(lexer, false);
-      }
-
-      // Check for closing ~~~
-      if (lexer->lookahead == '~') {
-        lexer->advance(lexer, false);
-        if (lexer->lookahead == '~') {
-          lexer->advance(lexer, false);
-          if (lexer->lookahead == '~') {
-            lexer->advance(lexer, false);
-            // Exactly three tildes (not four+)
-            if (lexer->lookahead != '~') {
-              if (has_content) {
-                lexer->result_symbol = TILDE_BODY;
-                return true;
-              }
-              return false;
-            }
-          }
-        }
-      }
-
-      // Not the closing ~~~ — consume rest of line
-      while (lexer->lookahead != '\n' && lexer->lookahead != '\r' && !lexer->eof(lexer)) {
-        lexer->advance(lexer, false);
-      }
-      if (lexer->lookahead == '\r') lexer->advance(lexer, false);
-      if (lexer->lookahead == '\n') lexer->advance(lexer, false);
-
-      has_content = true;
-    }
-
-    return false;
   }
 
   // ── Whitespace skip for remaining tokens ──

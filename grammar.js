@@ -23,7 +23,6 @@ export default grammar({
     $.injection_delimiter,
     $.done_marker,
     $.tilde_delimiter,
-    $.tilde_body,
     $.emphasis_open,
     $.emphasis_close,
     $.emphasis_open_multiline,
@@ -179,15 +178,30 @@ export default grammar({
       seq(/\r?\n/, optional($._last_token_whitespace)),
     ))),
 
-    // ~~~ markdown block ~~~
-    // Always injects markdown. Body is an opaque scanner token
-    // so comments and variables inside aren't interpreted.
+    // ~~~ rich text block ~~~
+    // Native LMY prose — emphasis, headings, inline code, fenced code blocks.
+    // Not an injection — LMY owns the content.
     tilde_block: $ => seq(
       $.tilde_delimiter,
       /\r?\n/,
       optional($.tilde_body),
       $.tilde_delimiter,
     ),
+
+    tilde_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
+      $.strong_emphasis_multiline,
+      $.emphasis_multiline,
+      $.inline_code,
+      $.variable,
+      /[^$*\/`\n\r~#]+/,
+      seq('/', optional($._last_token_punctuation)),
+      '$',
+      '*',
+      '`',
+      '~',
+      '#',
+      seq(/\r?\n/, optional($._last_token_whitespace)),
+    ))),
 
     _line_content: $ => repeat1(choice(
       $.strong_emphasis,
