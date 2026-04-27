@@ -56,6 +56,8 @@ static bool is_punctuation(int32_t c) {
          (c >= '[' && c <= '`') || (c >= '{' && c <= '~');
 }
 
+// Keys can start with # * . @ for things like: *.test: value, #/alias: value
+// Because # is here, heading_marker MUST be checked before key detection.
 static bool is_key_start(int32_t c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '#' ||
          c == '*' || c == '.' || c == '@';
@@ -452,11 +454,10 @@ bool tree_sitter_lmy_external_scanner_scan(
     if (is_key_start(lexer->lookahead)) {
       int32_t first_char = lexer->lookahead;
       int char_count = 0;
-      int32_t second_char = 0;
 
       lexer->advance(lexer, false);
       char_count++;
-      if (char_count == 1) second_char = lexer->lookahead;
+      int32_t second_char = lexer->lookahead;
 
       while (is_key_char(lexer->lookahead)) {
         lexer->advance(lexer, false);

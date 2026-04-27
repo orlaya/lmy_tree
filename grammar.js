@@ -52,10 +52,8 @@ export default grammar({
     [$.raw_value, $.strong_emphasis],
     [$.array_raw_value, $.emphasis],
     [$.array_raw_value, $.strong_emphasis],
-    [$.fold_body, $.emphasis_multiline],
-    [$.fold_body, $.strong_emphasis_multiline],
-    [$.preserve_body, $.emphasis_multiline],
-    [$.preserve_body, $.strong_emphasis_multiline],
+    [$._multiline_body, $.emphasis_multiline],
+    [$._multiline_body, $.strong_emphasis_multiline],
     [$.tilde_body, $.emphasis_multiline],
     [$.tilde_body, $.strong_emphasis_multiline],
     [$.heading_content, $.emphasis],
@@ -169,19 +167,7 @@ export default grammar({
       $.fold_close,
     ),
 
-    fold_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
-      $.strong_emphasis_multiline,
-      $.emphasis_multiline,
-      $.inline_code,
-      $.variable,
-      /[^$*\/`\n\r]+/,
-      seq('/', optional($._last_token_punctuation)),
-      '$',
-      $.emphasis_open_multiline,
-      '*',
-      '`',
-      seq(/\r?\n/, optional($._last_token_whitespace)),
-    ))),
+    fold_body: $ => $._multiline_body,
 
     multiline_preserve: $ => seq(
       $.preserve_delimiter,
@@ -189,7 +175,11 @@ export default grammar({
       $.preserve_delimiter,
     ),
 
-    preserve_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
+    preserve_body: $ => $._multiline_body,
+
+    // Shared inline content for folds and preserves.
+    // No ~/#/- exclusions — those chars are plain text inside << >> and || ||.
+    _multiline_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
       $.strong_emphasis_multiline,
       $.emphasis_multiline,
       $.inline_code,
@@ -204,8 +194,8 @@ export default grammar({
     ))),
 
     // ~~~ rich text block ~~~
-    // Native LMY prose — emphasis, headings, inline code, fenced code blocks.
-    // Not an injection — LMY owns the content.
+    // Excludes ~ and # from text regex — they have dedicated scanner tokens
+    // (tilde_delimiter, heading_marker) that need first crack at them.
     tilde_block: $ => seq(
       $.tilde_delimiter,
       /\r?\n/,
@@ -299,6 +289,7 @@ export default grammar({
       $.array_raw_value,
     ),
 
+    // Excludes , [ ] from text regex — array delimiters.
     array_raw_value: $ => prec(-1, seq(
       optional($._last_token_whitespace),
       repeat1(choice(
@@ -322,6 +313,11 @@ export default grammar({
       $.variable_segment,
     ),
 
+    // First choice excludes space/tab/[ so it stops at word boundary and
+    // doesn't eat array opens. Repeat allows spaces for multi-word values.
+    // Repeat regex matches tilde_body's regex exactly (excludes ~ #) so
+    // tree-sitter merges them into one lexer terminal — without this,
+    // tilde_body's regex wins and raw_value truncates after one word.
     raw_value: $ => prec.right(seq(
       optional($._last_token_whitespace),
       choice(
