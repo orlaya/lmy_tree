@@ -307,13 +307,10 @@ export default grammar({
       alias($.emphasis_close, $.emphasis_delimiter),
     )),
 
-    // **bold**
+    // **bold** — nests emphasis inside, so **text* degrades to italic
     strong_emphasis: $ => prec.dynamic(2, seq(
       alias($.emphasis_open, $.emphasis_delimiter),
-      alias($.emphasis_open, $.emphasis_delimiter),
-      optional($._last_token_punctuation),
-      $._emphasis_content,
-      alias($.emphasis_close, $.emphasis_delimiter),
+      $.emphasis,
       alias($.emphasis_close, $.emphasis_delimiter),
     )),
 
@@ -327,7 +324,7 @@ export default grammar({
       '`',
     )),
 
-    // ── Multi-line emphasis (fold_body, preserve_body) ──
+    // ── Multi-line emphasis (fold_body, preserve_body, tilde_body) ──
 
     // *italic* (can span lines)
     emphasis_multiline: $ => prec.dynamic(1, seq(
@@ -337,13 +334,10 @@ export default grammar({
       alias($.emphasis_close_multiline, $.emphasis_delimiter),
     )),
 
-    // **bold** (can span lines)
+    // **bold** (can span lines) — nests emphasis inside
     strong_emphasis_multiline: $ => prec.dynamic(2, seq(
       alias($.emphasis_open_multiline, $.emphasis_delimiter),
-      alias($.emphasis_open_multiline, $.emphasis_delimiter),
-      optional($._last_token_punctuation),
-      $._emphasis_content_multiline,
-      alias($.emphasis_close_multiline, $.emphasis_delimiter),
+      $.emphasis_multiline,
       alias($.emphasis_close_multiline, $.emphasis_delimiter),
     )),
 

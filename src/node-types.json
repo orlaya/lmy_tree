@@ -638,15 +638,11 @@
       "required": true,
       "types": [
         {
+          "type": "emphasis",
+          "named": true
+        },
+        {
           "type": "emphasis_delimiter",
-          "named": true
-        },
-        {
-          "type": "inline_code",
-          "named": true
-        },
-        {
-          "type": "variable",
           "named": true
         }
       ]
@@ -665,11 +661,7 @@
           "named": true
         },
         {
-          "type": "inline_code",
-          "named": true
-        },
-        {
-          "type": "variable",
+          "type": "emphasis_multiline",
           "named": true
         }
       ]

@@ -1361,38 +1361,8 @@
             "value": "emphasis_delimiter"
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "emphasis_open"
-            },
-            "named": true,
-            "value": "emphasis_delimiter"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_last_token_punctuation"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
             "type": "SYMBOL",
-            "name": "_emphasis_content"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "emphasis_close"
-            },
-            "named": true,
-            "value": "emphasis_delimiter"
+            "name": "emphasis"
           },
           {
             "type": "ALIAS",
@@ -1514,38 +1484,8 @@
             "value": "emphasis_delimiter"
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "emphasis_open_multiline"
-            },
-            "named": true,
-            "value": "emphasis_delimiter"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_last_token_punctuation"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
             "type": "SYMBOL",
-            "name": "_emphasis_content_multiline"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "emphasis_close_multiline"
-            },
-            "named": true,
-            "value": "emphasis_delimiter"
+            "name": "emphasis_multiline"
           },
           {
             "type": "ALIAS",
