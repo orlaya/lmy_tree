@@ -26,6 +26,8 @@ export default grammar({
     $.tilde_body,
     $.emphasis_open,
     $.emphasis_close,
+    $.emphasis_open_multiline,
+    $.emphasis_close_multiline,
     // Phantom tokens — never emitted by the scanner, but their presence in
     // valid_symbols tells the scanner what preceded the current position.
     // The grammar places optional($._last_token_whitespace) after whitespace
@@ -315,20 +317,20 @@ export default grammar({
 
     // *italic* (can span lines)
     emphasis_multiline: $ => prec.dynamic(1, seq(
-      alias($.emphasis_open, $.emphasis_delimiter),
+      alias($.emphasis_open_multiline, $.emphasis_delimiter),
       optional($._last_token_punctuation),
       $._emphasis_content_multiline,
-      alias($.emphasis_close, $.emphasis_delimiter),
+      alias($.emphasis_close_multiline, $.emphasis_delimiter),
     )),
 
     // **bold** (can span lines)
     strong_emphasis_multiline: $ => prec.dynamic(2, seq(
-      alias($.emphasis_open, $.emphasis_delimiter),
-      alias($.emphasis_open, $.emphasis_delimiter),
+      alias($.emphasis_open_multiline, $.emphasis_delimiter),
+      alias($.emphasis_open_multiline, $.emphasis_delimiter),
       optional($._last_token_punctuation),
       $._emphasis_content_multiline,
-      alias($.emphasis_close, $.emphasis_delimiter),
-      alias($.emphasis_close, $.emphasis_delimiter),
+      alias($.emphasis_close_multiline, $.emphasis_delimiter),
+      alias($.emphasis_close_multiline, $.emphasis_delimiter),
     )),
 
     // Multi-line — allows newlines

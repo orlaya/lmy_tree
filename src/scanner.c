@@ -20,10 +20,12 @@ enum TokenType {
   DONE_MARKER,         // xx (done list item prefix)
   TILDE_DELIMITER,     // ~~~
   TILDE_BODY,          // content between ~~~ markers (opaque for injection)
-  EMPHASIS_OPEN,           // * or ** opening delimiter
-  EMPHASIS_CLOSE,          // * or ** closing delimiter
-  LAST_TOKEN_WHITESPACE,   // phantom — never emitted, context via valid_symbols
-  LAST_TOKEN_PUNCTUATION,  // phantom — never emitted, context via valid_symbols
+  EMPHASIS_OPEN,               // * or ** opening — single-line (peeks for close)
+  EMPHASIS_CLOSE,              // * or ** closing — single-line
+  EMPHASIS_OPEN_MULTILINE,     // * or ** opening — multi-line (no peek)
+  EMPHASIS_CLOSE_MULTILINE,    // * or ** closing — multi-line
+  LAST_TOKEN_WHITESPACE,       // phantom — never emitted, context via valid_symbols
+  LAST_TOKEN_PUNCTUATION,      // phantom — never emitted, context via valid_symbols
   ERROR_SENTINEL,
 };
 
@@ -122,19 +124,24 @@ static bool has_closing_star_on_line(TSLexer *lexer) {
 }
 
 static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols) {
+  bool is_multi = valid_symbols[EMPHASIS_OPEN_MULTILINE] ||
+                  valid_symbols[EMPHASIS_CLOSE_MULTILINE];
+  int open_sym  = is_multi ? EMPHASIS_OPEN_MULTILINE  : EMPHASIS_OPEN;
+  int close_sym = is_multi ? EMPHASIS_CLOSE_MULTILINE : EMPHASIS_CLOSE;
+
   lexer->advance(lexer, false);
 
   // Continuing a delimiter run — we already decided open vs close
   if (s->num_emphasis_delimiters_left > 0) {
     if ((s->state & STATE_EMPHASIS_DELIMITER_IS_OPEN) &&
-        valid_symbols[EMPHASIS_OPEN]) {
+        valid_symbols[open_sym]) {
       s->state &= ~STATE_EMPHASIS_DELIMITER_IS_OPEN;
-      lexer->result_symbol = EMPHASIS_OPEN;
+      lexer->result_symbol = open_sym;
       s->num_emphasis_delimiters_left--;
       return true;
     }
-    if (valid_symbols[EMPHASIS_CLOSE]) {
-      lexer->result_symbol = EMPHASIS_CLOSE;
+    if (valid_symbols[close_sym]) {
+      lexer->result_symbol = close_sym;
       s->num_emphasis_delimiters_left--;
       return true;
     }
@@ -160,30 +167,30 @@ static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols
   // Closing (right-flanking): previous token was NOT whitespace, and either
   // previous wasn't punctuation, or next is punctuation/whitespace.
   // Close takes precedence over open.
-  if (valid_symbols[EMPHASIS_CLOSE] &&
+  if (valid_symbols[close_sym] &&
       !valid_symbols[LAST_TOKEN_WHITESPACE] &&
       (!valid_symbols[LAST_TOKEN_PUNCTUATION] ||
        next_punctuation || next_whitespace)) {
     s->state &= ~STATE_EMPHASIS_DELIMITER_IS_OPEN;
-    lexer->result_symbol = EMPHASIS_CLOSE;
+    lexer->result_symbol = close_sym;
     return true;
   }
 
   // Opening (left-flanking): next char is not whitespace, and either next
   // is not punctuation, or previous was punctuation/whitespace.
-  // Extra guard: only commit if there's a closing * on this line.
-  // If not, return false so the grammar's '*' literal handles it as plain text.
-  if (valid_symbols[EMPHASIS_OPEN] &&
+  if (valid_symbols[open_sym] &&
       !next_whitespace &&
       (!next_punctuation ||
        valid_symbols[LAST_TOKEN_PUNCTUATION] ||
        valid_symbols[LAST_TOKEN_WHITESPACE])) {
-    if (!has_closing_star_on_line(lexer)) {
+    // Single-line: only commit if there's a closing * on this line.
+    // Multi-line: always commit (close can be on a later line).
+    if (!is_multi && !has_closing_star_on_line(lexer)) {
       s->num_emphasis_delimiters_left = 0;
       return false;
     }
     s->state |= STATE_EMPHASIS_DELIMITER_IS_OPEN;
-    lexer->result_symbol = EMPHASIS_OPEN;
+    lexer->result_symbol = open_sym;
     return true;
   }
 
@@ -411,7 +418,8 @@ bool tree_sitter_lmy_external_scanner_scan(
   }
 
   // ── Emphasis open/close ──
-  if ((valid_symbols[EMPHASIS_OPEN] || valid_symbols[EMPHASIS_CLOSE]) &&
+  if ((valid_symbols[EMPHASIS_OPEN] || valid_symbols[EMPHASIS_CLOSE] ||
+       valid_symbols[EMPHASIS_OPEN_MULTILINE] || valid_symbols[EMPHASIS_CLOSE_MULTILINE]) &&
       lexer->lookahead == '*') {
     return parse_emphasis(s, lexer, valid_symbols);
   }
