@@ -534,6 +534,10 @@
                 "value": "$"
               },
               {
+                "type": "SYMBOL",
+                "name": "emphasis_open_multiline"
+              },
+              {
                 "type": "STRING",
                 "value": "*"
               },
@@ -656,6 +660,10 @@
               {
                 "type": "STRING",
                 "value": "$"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "emphasis_open_multiline"
               },
               {
                 "type": "STRING",
@@ -784,6 +792,10 @@
               {
                 "type": "STRING",
                 "value": "$"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "emphasis_open_multiline"
               },
               {
                 "type": "STRING",
@@ -1108,6 +1120,10 @@
                   "value": "$"
                 },
                 {
+                  "type": "SYMBOL",
+                  "name": "emphasis_open"
+                },
+                {
                   "type": "STRING",
                   "value": "*"
                 },
@@ -1221,6 +1237,10 @@
                 "value": "$"
               },
               {
+                "type": "SYMBOL",
+                "name": "emphasis_open"
+              },
+              {
                 "type": "STRING",
                 "value": "*"
               },
@@ -1283,6 +1303,10 @@
                 {
                   "type": "STRING",
                   "value": "$"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "emphasis_open"
                 },
                 {
                   "type": "STRING",
@@ -1863,7 +1887,81 @@
       "name": "comment"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "emphasis",
+      "strong_emphasis"
+    ],
+    [
+      "emphasis_multiline",
+      "strong_emphasis_multiline"
+    ],
+    [
+      "raw_value",
+      "emphasis"
+    ],
+    [
+      "raw_value",
+      "strong_emphasis"
+    ],
+    [
+      "raw_value",
+      "emphasis",
+      "strong_emphasis"
+    ],
+    [
+      "array_raw_value",
+      "emphasis"
+    ],
+    [
+      "array_raw_value",
+      "strong_emphasis"
+    ],
+    [
+      "array_raw_value",
+      "emphasis",
+      "strong_emphasis"
+    ],
+    [
+      "fold_body",
+      "emphasis_multiline"
+    ],
+    [
+      "fold_body",
+      "strong_emphasis_multiline"
+    ],
+    [
+      "fold_body",
+      "emphasis_multiline",
+      "strong_emphasis_multiline"
+    ],
+    [
+      "preserve_body",
+      "emphasis_multiline"
+    ],
+    [
+      "preserve_body",
+      "strong_emphasis_multiline"
+    ],
+    [
+      "preserve_body",
+      "emphasis_multiline",
+      "strong_emphasis_multiline"
+    ],
+    [
+      "tilde_body",
+      "emphasis_multiline"
+    ],
+    [
+      "tilde_body",
+      "strong_emphasis_multiline"
+    ],
+    [
+      "tilde_body",
+      "emphasis_multiline",
+      "strong_emphasis_multiline"
+    ]
+  ],
   "precedences": [],
   "externals": [
     {
