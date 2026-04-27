@@ -109,13 +109,44 @@ void tree_sitter_lmy_external_scanner_deserialize(void *payload, const char *buf
 // Peek ahead (without consuming) to check if there's a closing * on this line.
 // Returns true if a matching * is found before line end.
 static bool has_closing_star_on_line(TSLexer *lexer) {
-  // We're positioned right after the opening star(s), looking at the first
-  // content char. Scan forward for a * that isn't immediately followed by
-  // whitespace (which would make it a valid right-flanking delimiter).
   while (lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
          !lexer->eof(lexer)) {
     if (lexer->lookahead == '*') {
       return true;
+    }
+    lexer->advance(lexer, false);
+  }
+  return false;
+}
+
+// Peek ahead for a closing * before a blank line or EOF.
+// Allows single newlines (line wrapping) but a blank line (two consecutive
+// newlines with only whitespace between) means the paragraph ended.
+static bool has_closing_star_before_blank_line(TSLexer *lexer) {
+  while (!lexer->eof(lexer)) {
+    if (lexer->lookahead == '*') {
+      return true;
+    }
+    if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+      // Consume the newline
+      if (lexer->lookahead == '\r') lexer->advance(lexer, false);
+      if (lexer->lookahead == '\n') lexer->advance(lexer, false);
+      // Skip whitespace on the next line
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->advance(lexer, false);
+      }
+      // If the next line is also a newline (or EOF), that's a blank line — bail
+      if (lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+          lexer->eof(lexer)) {
+        return false;
+      }
+      // Also bail if we hit a closing delimiter (~~~ for tilde blocks,
+      // >> for folds, || for preserves)
+      if (lexer->lookahead == '~' || lexer->lookahead == '>' ||
+          lexer->lookahead == '|') {
+        return false;
+      }
+      continue;
     }
     lexer->advance(lexer, false);
   }
@@ -183,8 +214,13 @@ static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols
        valid_symbols[LAST_TOKEN_PUNCTUATION] ||
        valid_symbols[LAST_TOKEN_WHITESPACE])) {
     // Single-line: only commit if there's a closing * on this line.
-    // Multi-line: always commit (close can be on a later line).
+    // Multi-line: only commit if there's a closing * before a blank line.
+    // Emphasis never spans across paragraph boundaries.
     if (!is_multi && !has_closing_star_on_line(lexer)) {
+      s->num_emphasis_delimiters_left = 0;
+      return false;
+    }
+    if (is_multi && !has_closing_star_before_blank_line(lexer)) {
       s->num_emphasis_delimiters_left = 0;
       return false;
     }
