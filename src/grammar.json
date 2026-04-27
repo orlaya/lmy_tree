@@ -966,24 +966,27 @@
       }
     },
     "inline_code": {
-      "type": "PREC",
-      "value": 2,
+      "type": "TOKEN",
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "`"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^`\\n\\r]+"
-          },
-          {
-            "type": "STRING",
-            "value": "`"
-          }
-        ]
+        "type": "PREC",
+        "value": 2,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "`"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[^`\\n\\r]+"
+            },
+            {
+              "type": "STRING",
+              "value": "`"
+            }
+          ]
+        }
       }
     },
     "string": {

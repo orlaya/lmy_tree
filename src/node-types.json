@@ -228,11 +228,6 @@
     }
   },
   {
-    "type": "inline_code",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "list_item",
     "named": true,
     "fields": {},
@@ -721,6 +716,10 @@
   },
   {
     "type": "injection_delimiter",
+    "named": true
+  },
+  {
+    "type": "inline_code",
     "named": true
   },
   {
