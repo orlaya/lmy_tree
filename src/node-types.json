@@ -432,6 +432,10 @@
           "named": true
         },
         {
+          "type": "tilde_block",
+          "named": true
+        },
+        {
           "type": "verify_statement",
           "named": true
         }
@@ -516,7 +520,30 @@
           "named": true
         },
         {
+          "type": "tilde_block",
+          "named": true
+        },
+        {
           "type": "verify_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tilde_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "tilde_body",
+          "named": true
+        },
+        {
+          "type": "tilde_delimiter",
           "named": true
         }
       ]
@@ -701,6 +728,14 @@
   },
   {
     "type": "string",
+    "named": true
+  },
+  {
+    "type": "tilde_body",
+    "named": true
+  },
+  {
+    "type": "tilde_delimiter",
     "named": true
   },
   {

@@ -60,6 +60,10 @@
         {
           "type": "SYMBOL",
           "name": "done_item"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tilde_block"
         }
       ]
     },
@@ -552,6 +556,35 @@
           }
         ]
       }
+    },
+    "tilde_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "tilde_delimiter"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\r?\\n"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "tilde_body"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tilde_delimiter"
+        }
+      ]
     },
     "_line_content": {
       "type": "REPEAT1",
@@ -1224,6 +1257,14 @@
     {
       "type": "SYMBOL",
       "name": "done_marker"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "tilde_delimiter"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "tilde_body"
     },
     {
       "type": "SYMBOL",

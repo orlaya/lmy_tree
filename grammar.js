@@ -22,6 +22,8 @@ export default grammar({
     $.language_tag,
     $.injection_delimiter,
     $.done_marker,
+    $.tilde_delimiter,
+    $.tilde_body,
     $.error_sentinel,
   ],
 
@@ -43,6 +45,7 @@ export default grammar({
       $.assignment,
       $.list_item,
       $.done_item,
+      $.tilde_block,
     ),
 
     //
@@ -155,6 +158,16 @@ export default grammar({
       '*',
       /\r?\n/,
     )),
+
+    // ~~~ markdown block ~~~
+    // Always injects markdown. Body is an opaque scanner token
+    // so comments and variables inside aren't interpreted.
+    tilde_block: $ => seq(
+      $.tilde_delimiter,
+      /\r?\n/,
+      optional($.tilde_body),
+      $.tilde_delimiter,
+    ),
 
     _line_content: $ => repeat1(choice(
       $.variable,

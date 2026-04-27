@@ -162,6 +162,9 @@
 (preserve_delimiter) @punctuation
 (preserve_body) @string
 
+(tilde_delimiter) @punctuation
+(tilde_body) @string
+
 
 ;
 ;

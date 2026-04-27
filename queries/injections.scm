@@ -1,5 +1,15 @@
 ;
 ;
+; Tilde blocks — always markdown
+; ————————————————————————
+
+((tilde_block
+  (tilde_body) @injection.content)
+  (#set! injection.language "markdown"))
+
+
+;
+;
 ; Assignment values
 ; ————————————————————————
 
