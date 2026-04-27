@@ -55,6 +55,10 @@
           "named": true
         },
         {
+          "type": "emphasis_open",
+          "named": true
+        },
+        {
           "type": "inline_code",
           "named": true
         },
@@ -221,6 +225,29 @@
     }
   },
   {
+    "type": "emphasis_multiline",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "emphasis_delimiter",
+          "named": true
+        },
+        {
+          "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "fold_body",
     "named": true,
     "fields": {},
@@ -229,7 +256,11 @@
       "required": false,
       "types": [
         {
-          "type": "emphasis",
+          "type": "emphasis_multiline",
+          "named": true
+        },
+        {
+          "type": "emphasis_open",
           "named": true
         },
         {
@@ -237,7 +268,7 @@
           "named": true
         },
         {
-          "type": "strong_emphasis",
+          "type": "strong_emphasis_multiline",
           "named": true
         },
         {
@@ -406,7 +437,11 @@
       "required": false,
       "types": [
         {
-          "type": "emphasis",
+          "type": "emphasis_multiline",
+          "named": true
+        },
+        {
+          "type": "emphasis_open",
           "named": true
         },
         {
@@ -414,7 +449,7 @@
           "named": true
         },
         {
-          "type": "strong_emphasis",
+          "type": "strong_emphasis_multiline",
           "named": true
         },
         {
@@ -434,6 +469,10 @@
       "types": [
         {
           "type": "emphasis",
+          "named": true
+        },
+        {
+          "type": "emphasis_open",
           "named": true
         },
         {
@@ -625,6 +664,29 @@
     }
   },
   {
+    "type": "strong_emphasis_multiline",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "emphasis_delimiter",
+          "named": true
+        },
+        {
+          "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "tilde_block",
     "named": true,
     "fields": {},
@@ -725,10 +787,6 @@
     "named": false
   },
   {
-    "type": "*",
-    "named": false
-  },
-  {
     "type": ",",
     "named": false
   },
@@ -774,6 +832,10 @@
   },
   {
     "type": "emphasis_delimiter",
+    "named": true
+  },
+  {
+    "type": "emphasis_open",
     "named": true
   },
   {

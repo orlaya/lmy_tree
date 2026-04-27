@@ -140,8 +140,10 @@
 ; ————————————————————————
 (inline_code) @text.literal
 (emphasis_delimiter) @punctuation.delimiter
-(emphasis) @text.emphasis
-(strong_emphasis) @text.strong
+(emphasis) @emphasis
+(strong_emphasis) @emphasis.strong
+(emphasis_multiline) @emphasis
+(strong_emphasis_multiline) @emphasis.strong
 
 
 ;

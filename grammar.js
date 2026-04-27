@@ -41,6 +41,18 @@ export default grammar({
     $.comment,
   ],
 
+  conflicts: $ => [
+    [$.fold_body, $.emphasis_multiline],
+    [$.fold_body, $.strong_emphasis_multiline],
+    [$.preserve_body, $.emphasis_multiline],
+    [$.preserve_body, $.strong_emphasis_multiline],
+    [$.raw_value, $.emphasis],
+    [$.raw_value, $.strong_emphasis],
+    [$.raw_value, $.emphasis, $.strong_emphasis],
+    [$.array_raw_value, $.emphasis],
+    [$.array_raw_value, $.strong_emphasis],
+  ],
+
   rules: {
     source_file: $ => repeat(choice($._definition, '}', /\r?\n/)),
 
@@ -145,14 +157,14 @@ export default grammar({
     ),
 
     fold_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
-      $.strong_emphasis,
-      $.emphasis,
+      $.strong_emphasis_multiline,
+      $.emphasis_multiline,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
       seq('/', optional($._last_token_punctuation)),
       '$',
-      '*',
+      $.emphasis_open,
       '`',
       seq(/\r?\n/, optional($._last_token_whitespace)),
     ))),
@@ -164,14 +176,14 @@ export default grammar({
     ),
 
     preserve_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
-      $.strong_emphasis,
-      $.emphasis,
+      $.strong_emphasis_multiline,
+      $.emphasis_multiline,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
       seq('/', optional($._last_token_punctuation)),
       '$',
-      '*',
+      $.emphasis_open,
       '`',
       seq(/\r?\n/, optional($._last_token_whitespace)),
     ))),
@@ -194,7 +206,7 @@ export default grammar({
       /[^$*\/`\n\r]+/,
       '/',
       '$',
-      '*',
+      $.emphasis_open,
       '`',
     )),
 
@@ -240,7 +252,7 @@ export default grammar({
         /[^,$*\/~`\n\r\[\]]+/,
         seq('/', optional($._last_token_punctuation)),
         '$',
-        '*',
+        $.emphasis_open,
         '~',
         '`',
       )),
@@ -262,7 +274,7 @@ export default grammar({
         /[^ \t$*\/~`\n\r\[]+/,
         seq('/', optional($._last_token_punctuation)),
         '$',
-        '*',
+        $.emphasis_open,
         '~',
         '`',
       ),
@@ -274,11 +286,13 @@ export default grammar({
         /[^$*\/~`\n\r]+/,
         seq('/', optional($._last_token_punctuation)),
         '$',
-        '*',
+        $.emphasis_open,
         '~',
         '`',
       )),
     )),
+
+    // ── Single-line emphasis (raw_value, array_raw_value) ──
 
     // *italic*
     emphasis: $ => prec.dynamic(1, seq(
@@ -298,8 +312,38 @@ export default grammar({
       alias($.emphasis_close, $.emphasis_delimiter),
     )),
 
-    // Content inside emphasis — same as body text but no literal *
+    // Single-line only — no newlines allowed
     _emphasis_content: $ => repeat1(choice(
+      $.inline_code,
+      $.variable,
+      /[^$*\/`\n\r]+/,
+      seq('/', optional($._last_token_punctuation)),
+      '$',
+      '`',
+    )),
+
+    // ── Multi-line emphasis (fold_body, preserve_body) ──
+
+    // *italic* (can span lines)
+    emphasis_multiline: $ => prec.dynamic(1, seq(
+      alias($.emphasis_open, $.emphasis_delimiter),
+      optional($._last_token_punctuation),
+      $._emphasis_content_multiline,
+      alias($.emphasis_close, $.emphasis_delimiter),
+    )),
+
+    // **bold** (can span lines)
+    strong_emphasis_multiline: $ => prec.dynamic(2, seq(
+      alias($.emphasis_open, $.emphasis_delimiter),
+      alias($.emphasis_open, $.emphasis_delimiter),
+      optional($._last_token_punctuation),
+      $._emphasis_content_multiline,
+      alias($.emphasis_close, $.emphasis_delimiter),
+      alias($.emphasis_close, $.emphasis_delimiter),
+    )),
+
+    // Multi-line — allows newlines
+    _emphasis_content_multiline: $ => repeat1(choice(
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
