@@ -142,8 +142,10 @@
 (emphasis_delimiter) @punctuation.delimiter
 (emphasis) @emphasis
 (strong_emphasis) @emphasis.strong
+(strong_emphasis (emphasis) @emphasis.strong)
 (emphasis_multiline) @emphasis
 (strong_emphasis_multiline) @emphasis.strong
+(strong_emphasis_multiline (emphasis_multiline) @emphasis.strong)
 
 
 ;
