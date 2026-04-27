@@ -155,8 +155,13 @@ static bool has_closing_star_before_blank_line(TSLexer *lexer) {
 }
 
 static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols) {
-  bool is_multi = valid_symbols[EMPHASIS_OPEN_MULTILINE] ||
-                  valid_symbols[EMPHASIS_CLOSE_MULTILINE];
+  // Prefer single-line when both are valid (GLR has heading path + tilde_body
+  // path active simultaneously — single-line feeds heading_content, multiline
+  // feeds tilde_body. Picking single-line lets the heading path survive.)
+  bool has_single = valid_symbols[EMPHASIS_OPEN] || valid_symbols[EMPHASIS_CLOSE];
+  bool has_multi  = valid_symbols[EMPHASIS_OPEN_MULTILINE] ||
+                    valid_symbols[EMPHASIS_CLOSE_MULTILINE];
+  bool is_multi = has_multi && !has_single;
   int open_sym  = is_multi ? EMPHASIS_OPEN_MULTILINE  : EMPHASIS_OPEN;
   int close_sym = is_multi ? EMPHASIS_CLOSE_MULTILINE : EMPHASIS_CLOSE;
 
