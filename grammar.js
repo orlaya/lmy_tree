@@ -337,7 +337,7 @@ export default grammar({
         '~',
         '`',
       ),
-      repeat(choice(
+      repeat(prec.right(2, choice(
         $.strong_emphasis,
         $.emphasis,
         $.inline_code,
@@ -349,7 +349,7 @@ export default grammar({
         '*',
         '~',
         '`',
-      )),
+      ))),
     )),
 
     // ── Single-line emphasis (raw_value, array_raw_value) ──
