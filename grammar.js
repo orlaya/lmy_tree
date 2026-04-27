@@ -322,7 +322,7 @@ export default grammar({
       $.variable_segment,
     ),
 
-    raw_value: $ => prec.right(seq(
+    raw_value: $ => prec.right(1, seq(
       optional($._last_token_whitespace),
       choice(
         $.strong_emphasis,

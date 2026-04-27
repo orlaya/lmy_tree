@@ -1312,7 +1312,7 @@
     },
     "raw_value": {
       "type": "PREC_RIGHT",
-      "value": 0,
+      "value": 1,
       "content": {
         "type": "SEQ",
         "members": [
