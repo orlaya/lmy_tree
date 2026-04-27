@@ -154,6 +154,7 @@
 (boolean) @boolean
 (number) @number
 (emphasis_open) @punctuation.special
+"*" @punctuation.special
 
 ; Version parts
 (version_prefix) @operator
