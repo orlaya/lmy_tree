@@ -322,7 +322,7 @@ export default grammar({
       $.variable_segment,
     ),
 
-    raw_value: $ => prec.right(1, seq(
+    raw_value: $ => prec.right(seq(
       optional($._last_token_whitespace),
       choice(
         $.strong_emphasis,
@@ -337,19 +337,20 @@ export default grammar({
         '~',
         '`',
       ),
-      repeat(prec.right(2, choice(
+      repeat(choice(
         $.strong_emphasis,
         $.emphasis,
         $.inline_code,
         $.variable,
-        /[^$*\/~`\n\r]+/,
+        /[^$*\/`\n\r~#]+/,
         seq('/', optional($._last_token_punctuation)),
         '$',
         $.emphasis_open,
         '*',
         '~',
         '`',
-      ))),
+        '#',
+      )),
     )),
 
     // ── Single-line emphasis (raw_value, array_raw_value) ──
