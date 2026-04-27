@@ -138,7 +138,7 @@
 ;
 ; Inline formatting
 ; ————————————————————————
-(inline_code) @string.special
+(inline_code) @text.literal
 
 
 ;
