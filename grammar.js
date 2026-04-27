@@ -136,11 +136,13 @@ export default grammar({
     ),
 
     fold_body: $ => repeat1(choice(
+      $.inline_code,
       $.variable,
-      /[^$*\/\n\r]+/,
+      /[^$*\/`\n\r]+/,
       '/',
       '$',
       '*',
+      '`',
       /\r?\n/,
     )),
 
@@ -151,11 +153,13 @@ export default grammar({
     ),
 
     preserve_body: $ => repeat1(choice(
+      $.inline_code,
       $.variable,
-      /[^$*\/\n\r]+/,
+      /[^$*\/`\n\r]+/,
       '/',
       '$',
       '*',
+      '`',
       /\r?\n/,
     )),
 
@@ -170,11 +174,13 @@ export default grammar({
     ),
 
     _line_content: $ => repeat1(choice(
+      $.inline_code,
       $.variable,
-      /[^$*\/\n\r]+/,
+      /[^$*\/`\n\r]+/,
       '/',
       '$',
       '*',
+      '`',
     )),
 
     _value: $ => choice(
@@ -210,12 +216,14 @@ export default grammar({
     ),
 
     array_raw_value: $ => prec(-1, repeat1(choice(
+      $.inline_code,
       $.variable,
-      /[^,$*\/~\n\r\[\]]+/,
+      /[^,$*\/~`\n\r\[\]]+/,
       '/',
       '$',
       '*',
       '~',
+      '`',
     ))),
 
     variable: $ => seq(
@@ -226,22 +234,29 @@ export default grammar({
 
     raw_value: $ => prec(-1, seq(
       choice(
+        $.inline_code,
         $.variable,
-        /[^ \t$*\/~\n\r\[]+/,
+        /[^ \t$*\/~`\n\r\[]+/,
         '/',
         '$',
         '*',
         '~',
+        '`',
       ),
       repeat(choice(
+        $.inline_code,
         $.variable,
-        /[^$*\/~\n\r]+/,
+        /[^$*\/~`\n\r]+/,
         '/',
         '$',
         '*',
         '~',
+        '`',
       )),
     )),
+
+    // `inline code`
+    inline_code: $ => seq('`', /[^`\n\r]+/, '`'),
 
     // "quoted string"
     string: $ => /"[^"\n]*"/,

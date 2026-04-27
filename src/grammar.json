@@ -475,11 +475,15 @@
         "members": [
           {
             "type": "SYMBOL",
+            "name": "inline_code"
+          },
+          {
+            "type": "SYMBOL",
             "name": "variable"
           },
           {
             "type": "PATTERN",
-            "value": "[^$*\\/\\n\\r]+"
+            "value": "[^$*\\/`\\n\\r]+"
           },
           {
             "type": "STRING",
@@ -492,6 +496,10 @@
           {
             "type": "STRING",
             "value": "*"
+          },
+          {
+            "type": "STRING",
+            "value": "`"
           },
           {
             "type": "PATTERN",
@@ -532,11 +540,15 @@
         "members": [
           {
             "type": "SYMBOL",
+            "name": "inline_code"
+          },
+          {
+            "type": "SYMBOL",
             "name": "variable"
           },
           {
             "type": "PATTERN",
-            "value": "[^$*\\/\\n\\r]+"
+            "value": "[^$*\\/`\\n\\r]+"
           },
           {
             "type": "STRING",
@@ -549,6 +561,10 @@
           {
             "type": "STRING",
             "value": "*"
+          },
+          {
+            "type": "STRING",
+            "value": "`"
           },
           {
             "type": "PATTERN",
@@ -593,11 +609,15 @@
         "members": [
           {
             "type": "SYMBOL",
+            "name": "inline_code"
+          },
+          {
+            "type": "SYMBOL",
             "name": "variable"
           },
           {
             "type": "PATTERN",
-            "value": "[^$*\\/\\n\\r]+"
+            "value": "[^$*\\/`\\n\\r]+"
           },
           {
             "type": "STRING",
@@ -610,6 +630,10 @@
           {
             "type": "STRING",
             "value": "*"
+          },
+          {
+            "type": "STRING",
+            "value": "`"
           }
         ]
       }
@@ -792,11 +816,15 @@
           "members": [
             {
               "type": "SYMBOL",
+              "name": "inline_code"
+            },
+            {
+              "type": "SYMBOL",
               "name": "variable"
             },
             {
               "type": "PATTERN",
-              "value": "[^,$*\\/~\\n\\r\\[\\]]+"
+              "value": "[^,$*\\/~`\\n\\r\\[\\]]+"
             },
             {
               "type": "STRING",
@@ -813,6 +841,10 @@
             {
               "type": "STRING",
               "value": "~"
+            },
+            {
+              "type": "STRING",
+              "value": "`"
             }
           ]
         }
@@ -858,11 +890,15 @@
             "members": [
               {
                 "type": "SYMBOL",
+                "name": "inline_code"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "variable"
               },
               {
                 "type": "PATTERN",
-                "value": "[^ \\t$*\\/~\\n\\r\\[]+"
+                "value": "[^ \\t$*\\/~`\\n\\r\\[]+"
               },
               {
                 "type": "STRING",
@@ -879,6 +915,10 @@
               {
                 "type": "STRING",
                 "value": "~"
+              },
+              {
+                "type": "STRING",
+                "value": "`"
               }
             ]
           },
@@ -889,11 +929,15 @@
               "members": [
                 {
                   "type": "SYMBOL",
+                  "name": "inline_code"
+                },
+                {
+                  "type": "SYMBOL",
                   "name": "variable"
                 },
                 {
                   "type": "PATTERN",
-                  "value": "[^$*\\/~\\n\\r]+"
+                  "value": "[^$*\\/~`\\n\\r]+"
                 },
                 {
                   "type": "STRING",
@@ -910,12 +954,33 @@
                 {
                   "type": "STRING",
                   "value": "~"
+                },
+                {
+                  "type": "STRING",
+                  "value": "`"
                 }
               ]
             }
           }
         ]
       }
+    },
+    "inline_code": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "`"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[^`\\n\\r]+"
+        },
+        {
+          "type": "STRING",
+          "value": "`"
+        }
+      ]
     },
     "string": {
       "type": "PATTERN",

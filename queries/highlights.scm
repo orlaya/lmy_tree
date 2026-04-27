@@ -136,6 +136,14 @@
 
 ;
 ;
+; Inline formatting
+; ————————————————————————
+(inline_code "`" @punctuation.delimiter)
+(inline_code) @string.special
+
+
+;
+;
 ; Values
 ; ————————————————————————
 (string) @string
