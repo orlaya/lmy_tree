@@ -1077,8 +1077,12 @@
           "name": "number"
         },
         {
-          "type": "SYMBOL",
-          "name": "raw_value"
+          "type": "PREC",
+          "value": -1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "raw_value"
+          }
         }
       ]
     },
@@ -1308,7 +1312,7 @@
     },
     "raw_value": {
       "type": "PREC_RIGHT",
-      "value": -1,
+      "value": 0,
       "content": {
         "type": "SEQ",
         "members": [

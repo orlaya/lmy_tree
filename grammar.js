@@ -280,7 +280,7 @@ export default grammar({
       $.boolean,
       $.version,
       $.number,
-      $.raw_value,
+      prec(-1, $.raw_value),
     ),
 
     array: $ => prec(1, seq('[', commaSep($._array_value), ']')),
@@ -322,7 +322,7 @@ export default grammar({
       $.variable_segment,
     ),
 
-    raw_value: $ => prec.right(-1, seq(
+    raw_value: $ => prec.right(seq(
       optional($._last_token_whitespace),
       choice(
         $.strong_emphasis,
