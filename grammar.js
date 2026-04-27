@@ -256,7 +256,7 @@ export default grammar({
     )),
 
     // `inline code`
-    inline_code: $ => seq('`', /[^`\n\r]+/, '`'),
+    inline_code: $ => prec(2, seq('`', /[^`\n\r]+/, '`')),
 
     // "quoted string"
     string: $ => /"[^"\n]*"/,
