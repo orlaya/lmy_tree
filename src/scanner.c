@@ -374,8 +374,60 @@ bool tree_sitter_lmy_external_scanner_scan(
     lexer->advance(lexer, true);
   }
 
-  if ((valid_symbols[KEY] || valid_symbols[DONE_MARKER]) && column_before_skip == 0) {
-    // Quoted key: "something":
+  // ── Column-0 markers: headings, lists, keys ──
+  // Order matters — heading/list/in_progress checks MUST come before key
+  // detection because # is a valid key_start char and would get swallowed
+  // by the key path otherwise.
+  if (column_before_skip == 0 && (
+      valid_symbols[KEY] || valid_symbols[DONE_MARKER] ||
+      valid_symbols[LIST_MARKER] || valid_symbols[IN_PROGRESS_MARKER] ||
+      valid_symbols[HEADING_MARKER])) {
+
+    // ── Heading marker: # through ###### followed by space/tab ──
+    if (valid_symbols[HEADING_MARKER] && lexer->lookahead == '#') {
+      uint8_t hash_count = 0;
+      while (lexer->lookahead == '#' && hash_count < 7) {
+        lexer->advance(lexer, false);
+        hash_count++;
+      }
+      lexer->mark_end(lexer);
+      if (hash_count >= 1 && hash_count <= 6 &&
+          (lexer->lookahead == ' ' || lexer->lookahead == '\t')) {
+        lexer->result_symbol = HEADING_MARKER;
+        return true;
+      }
+      return false;
+    }
+
+    // ── List marker: -- followed by space/tab ──
+    if (valid_symbols[LIST_MARKER] && lexer->lookahead == '-') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '-') {
+        lexer->advance(lexer, false);
+        lexer->mark_end(lexer);
+        if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+          lexer->result_symbol = LIST_MARKER;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // ── In-progress marker: == followed by space/tab ──
+    if (valid_symbols[IN_PROGRESS_MARKER] && lexer->lookahead == '=') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '=') {
+        lexer->advance(lexer, false);
+        lexer->mark_end(lexer);
+        if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+          lexer->result_symbol = IN_PROGRESS_MARKER;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // ── Quoted key: "something": ──
     if (valid_symbols[KEY] && lexer->lookahead == '"') {
       lexer->advance(lexer, false);
       while (lexer->lookahead != '"' && lexer->lookahead != '\n' && !lexer->eof(lexer)) {
@@ -394,7 +446,8 @@ bool tree_sitter_lmy_external_scanner_scan(
       return false;
     }
 
-    // Bare key or done marker — both start with alpha at column 0.
+    // ── Bare key or done marker ──
+    // Both start with alpha at column 0.
     // Read the identifier, then decide: trailing colon → KEY, exactly "xx" + whitespace → DONE_MARKER.
     if (is_key_start(lexer->lookahead)) {
       int32_t first_char = lexer->lookahead;
@@ -444,54 +497,6 @@ bool tree_sitter_lmy_external_scanner_scan(
 
       return false;
     }
-  }
-
-  // ── List marker: -- at column 0 followed by space/tab ──
-  if (valid_symbols[LIST_MARKER] && column_before_skip == 0 &&
-      lexer->lookahead == '-') {
-    lexer->advance(lexer, false);
-    if (lexer->lookahead == '-') {
-      lexer->advance(lexer, false);
-      lexer->mark_end(lexer);
-      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-        lexer->result_symbol = LIST_MARKER;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // ── In-progress marker: == at column 0 followed by space/tab ──
-  if (valid_symbols[IN_PROGRESS_MARKER] && column_before_skip == 0 &&
-      lexer->lookahead == '=') {
-    lexer->advance(lexer, false);
-    if (lexer->lookahead == '=') {
-      lexer->advance(lexer, false);
-      lexer->mark_end(lexer);
-      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-        lexer->result_symbol = IN_PROGRESS_MARKER;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // ── Heading marker: # through ###### at column 0 ──
-  if (valid_symbols[HEADING_MARKER] && column_before_skip == 0 &&
-      lexer->lookahead == '#') {
-    uint8_t hash_count = 0;
-    while (lexer->lookahead == '#' && hash_count < 7) {
-      lexer->advance(lexer, false);
-      hash_count++;
-    }
-    lexer->mark_end(lexer);
-    // 1-6 hashes followed by space/tab — it's a heading
-    if (hash_count >= 1 && hash_count <= 6 &&
-        (lexer->lookahead == ' ' || lexer->lookahead == '\t')) {
-      lexer->result_symbol = HEADING_MARKER;
-      return true;
-    }
-    return false;
   }
 
   // ── Fenced code delimiter: ``` (exactly three backticks) ──
