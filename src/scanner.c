@@ -20,6 +20,8 @@ enum TokenType {
   DONE_MARKER,         // xx (done list item prefix)
   TILDE_DELIMITER,     // ~~~
   HEADING_MARKER,      // # through ###### at column 0 followed by space
+  FENCED_CODE_DELIMITER, // ``` (exactly three backticks)
+  FENCED_CODE_BODY,      // opaque blob inside fenced code block
   EMPHASIS_OPEN,               // * or ** opening — single-line (peeks for close)
   EMPHASIS_CLOSE,              // * or ** closing — single-line
   EMPHASIS_OPEN_MULTILINE,     // * or ** opening — multi-line (no peek)
@@ -327,6 +329,40 @@ bool tree_sitter_lmy_external_scanner_scan(
     return true;
   }
 
+  // ── Fenced code body: opaque blob, consumes until ``` at start of line ──
+  if (valid_symbols[FENCED_CODE_BODY]) {
+    // Consume everything until we see ``` at column 0
+    while (!lexer->eof(lexer)) {
+      if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+        // Consume the newline
+        if (lexer->lookahead == '\r') lexer->advance(lexer, false);
+        if (lexer->lookahead == '\n') lexer->advance(lexer, false);
+        // Check if next line starts with ```
+        if (lexer->lookahead == '`') {
+          lexer->mark_end(lexer);
+          lexer->advance(lexer, false);
+          if (lexer->lookahead == '`') {
+            lexer->advance(lexer, false);
+            if (lexer->lookahead == '`') {
+              lexer->advance(lexer, false);
+              // Exactly three — not four+
+              if (lexer->lookahead != '`') {
+                lexer->result_symbol = FENCED_CODE_BODY;
+                return true;
+              }
+            }
+          }
+        }
+        continue;
+      }
+      lexer->advance(lexer, false);
+    }
+    // Hit EOF without closing — emit what we have
+    lexer->mark_end(lexer);
+    lexer->result_symbol = FENCED_CODE_BODY;
+    return true;
+  }
+
   // ── Whitespace skip for remaining tokens ──
 
   if (lexer->eof(lexer)) return false;
@@ -422,6 +458,24 @@ bool tree_sitter_lmy_external_scanner_scan(
         (lexer->lookahead == ' ' || lexer->lookahead == '\t')) {
       lexer->result_symbol = HEADING_MARKER;
       return true;
+    }
+    return false;
+  }
+
+  // ── Fenced code delimiter: ``` (exactly three backticks) ──
+  if (valid_symbols[FENCED_CODE_DELIMITER] && lexer->lookahead == '`') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '`') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '`') {
+        lexer->advance(lexer, false);
+        lexer->mark_end(lexer);
+        // Exactly three — not four+
+        if (lexer->lookahead != '`') {
+          lexer->result_symbol = FENCED_CODE_DELIMITER;
+          return true;
+        }
+      }
     }
     return false;
   }

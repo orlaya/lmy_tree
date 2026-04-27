@@ -50,3 +50,13 @@
 (done_item
   (language_tag) @injection.language
   (multiline_preserve (preserve_body) @injection.content))
+
+
+;
+;
+; Fenced code blocks (inside tilde blocks)
+; ————————————————————————
+
+(fenced_code_block
+  (fenced_code_language) @injection.language
+  (fenced_code_body) @injection.content)

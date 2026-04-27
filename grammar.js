@@ -24,6 +24,8 @@ export default grammar({
     $.done_marker,
     $.tilde_delimiter,
     $.heading_marker,
+    $.fenced_code_delimiter,
+    $.fenced_code_body,
     $.emphasis_open,
     $.emphasis_close,
     $.emphasis_open_multiline,
@@ -207,6 +209,7 @@ export default grammar({
 
     tilde_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
       $.heading,
+      $.fenced_code_block,
       $.strong_emphasis_multiline,
       $.emphasis_multiline,
       $.inline_code,
@@ -242,6 +245,18 @@ export default grammar({
       '*',
       '`',
     ))),
+
+    // ```ts ... ``` — fenced code block, only inside tilde blocks
+    // Body is opaque for language injection. Language tag is optional.
+    fenced_code_block: $ => seq(
+      $.fenced_code_delimiter,
+      optional($.fenced_code_language),
+      /\r?\n/,
+      optional($.fenced_code_body),
+      $.fenced_code_delimiter,
+    ),
+
+    fenced_code_language: $ => /[a-zA-Z]\w*/,
 
     _value: $ => choice(
       seq($.language_tag, $.injection_delimiter, $._injectable_value),

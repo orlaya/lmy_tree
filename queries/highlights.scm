@@ -146,6 +146,15 @@
 
 ;
 ;
+; Fenced code blocks (inside tilde blocks)
+; ————————————————————————
+(fenced_code_delimiter) @punctuation
+(fenced_code_language) @punctuation
+(fenced_code_body) @string
+
+
+;
+;
 ; Inline formatting
 ; ————————————————————————
 (inline_code) @text.literal
