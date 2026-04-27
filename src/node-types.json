@@ -51,7 +51,15 @@
       "required": false,
       "types": [
         {
+          "type": "emphasis",
+          "named": true
+        },
+        {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "strong_emphasis",
           "named": true
         },
         {
@@ -190,6 +198,29 @@
     }
   },
   {
+    "type": "emphasis",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "emphasis_delimiter",
+          "named": true
+        },
+        {
+          "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "fold_body",
     "named": true,
     "fields": {},
@@ -198,7 +229,15 @@
       "required": false,
       "types": [
         {
+          "type": "emphasis",
+          "named": true
+        },
+        {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "strong_emphasis",
           "named": true
         },
         {
@@ -367,7 +406,15 @@
       "required": false,
       "types": [
         {
+          "type": "emphasis",
+          "named": true
+        },
+        {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "strong_emphasis",
           "named": true
         },
         {
@@ -386,7 +433,15 @@
       "required": false,
       "types": [
         {
+          "type": "emphasis",
+          "named": true
+        },
+        {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "strong_emphasis",
           "named": true
         },
         {
@@ -547,6 +602,29 @@
     }
   },
   {
+    "type": "strong_emphasis",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "emphasis_delimiter",
+          "named": true
+        },
+        {
+          "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "tilde_block",
     "named": true,
     "fields": {},
@@ -692,6 +770,10 @@
   },
   {
     "type": "done_marker",
+    "named": true
+  },
+  {
+    "type": "emphasis_delimiter",
     "named": true
   },
   {

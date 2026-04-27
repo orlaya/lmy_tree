@@ -24,6 +24,8 @@ export default grammar({
     $.done_marker,
     $.tilde_delimiter,
     $.tilde_body,
+    $.emphasis_open,
+    $.emphasis_close,
     $.error_sentinel,
   ],
 
@@ -136,6 +138,8 @@ export default grammar({
     ),
 
     fold_body: $ => repeat1(choice(
+      $.strong_emphasis,
+      $.emphasis,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
@@ -153,6 +157,8 @@ export default grammar({
     ),
 
     preserve_body: $ => repeat1(choice(
+      $.strong_emphasis,
+      $.emphasis,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
@@ -174,6 +180,8 @@ export default grammar({
     ),
 
     _line_content: $ => repeat1(choice(
+      $.strong_emphasis,
+      $.emphasis,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
@@ -216,6 +224,8 @@ export default grammar({
     ),
 
     array_raw_value: $ => prec(-1, repeat1(choice(
+      $.strong_emphasis,
+      $.emphasis,
       $.inline_code,
       $.variable,
       /[^,$*\/~`\n\r\[\]]+/,
@@ -234,6 +244,8 @@ export default grammar({
 
     raw_value: $ => prec(-1, seq(
       choice(
+        $.strong_emphasis,
+        $.emphasis,
         $.inline_code,
         $.variable,
         /[^ \t$*\/~`\n\r\[]+/,
@@ -244,6 +256,8 @@ export default grammar({
         '`',
       ),
       repeat(choice(
+        $.strong_emphasis,
+        $.emphasis,
         $.inline_code,
         $.variable,
         /[^$*\/~`\n\r]+/,
@@ -253,6 +267,33 @@ export default grammar({
         '~',
         '`',
       )),
+    )),
+
+    // *italic*
+    emphasis: $ => prec.dynamic(1, seq(
+      alias($.emphasis_open, $.emphasis_delimiter),
+      $._emphasis_content,
+      alias($.emphasis_close, $.emphasis_delimiter),
+    )),
+
+    // **bold**
+    strong_emphasis: $ => prec.dynamic(2, seq(
+      alias($.emphasis_open, $.emphasis_delimiter),
+      alias($.emphasis_open, $.emphasis_delimiter),
+      $._emphasis_content,
+      alias($.emphasis_close, $.emphasis_delimiter),
+      alias($.emphasis_close, $.emphasis_delimiter),
+    )),
+
+    // Content inside emphasis — same as body text but no literal *
+    _emphasis_content: $ => repeat1(choice(
+      $.inline_code,
+      $.variable,
+      /[^$*\/`\n\r]+/,
+      '/',
+      '$',
+      '`',
+      /\r?\n/,
     )),
 
     // `inline code`

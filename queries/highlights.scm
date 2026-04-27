@@ -139,6 +139,9 @@
 ; Inline formatting
 ; ————————————————————————
 (inline_code) @text.literal
+(emphasis_delimiter) @punctuation.delimiter
+(emphasis) @text.emphasis
+(strong_emphasis) @text.strong
 
 
 ;

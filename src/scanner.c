@@ -20,6 +20,8 @@ enum TokenType {
   DONE_MARKER,         // xx (done list item prefix)
   TILDE_DELIMITER,     // ~~~
   TILDE_BODY,          // content between ~~~ markers (opaque for injection)
+  EMPHASIS_OPEN,       // * or ** opening delimiter
+  EMPHASIS_CLOSE,      // * or ** closing delimiter
   ERROR_SENTINEL,
 };
 
@@ -41,6 +43,11 @@ static bool is_version_tag_char(int32_t c) {
          (c >= '0' && c <= '9') || c == '_';
 }
 
+static bool is_punctuation(int32_t c) {
+  return (c >= '!' && c <= '/') || (c >= ':' && c <= '@') ||
+         (c >= '[' && c <= '`') || (c >= '{' && c <= '~');
+}
+
 static bool is_key_start(int32_t c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '#' ||
          c == '*' || c == '.' || c == '@';
@@ -52,16 +59,113 @@ static bool is_key_char(int32_t c) {
          c == '/' || c == '.' || c == '-' || c == '*';
 }
 
-void *tree_sitter_lmy_external_scanner_create() { return NULL; }
-void tree_sitter_lmy_external_scanner_destroy(void *payload) {}
-unsigned tree_sitter_lmy_external_scanner_serialize(void *payload, char *buffer) { return 0; }
-void tree_sitter_lmy_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {}
+// ── Emphasis state ──
+// Current delimiter run is an opening run
+static const uint8_t STATE_EMPHASIS_DELIMITER_IS_OPEN = 0x04;
+
+typedef struct {
+  uint8_t state;
+  uint8_t num_emphasis_delimiters_left;
+} Scanner;
+
+void *tree_sitter_lmy_external_scanner_create() {
+  Scanner *s = calloc(1, sizeof(Scanner));
+  return s;
+}
+
+void tree_sitter_lmy_external_scanner_destroy(void *payload) {
+  free(payload);
+}
+
+unsigned tree_sitter_lmy_external_scanner_serialize(void *payload, char *buffer) {
+  Scanner *s = (Scanner *)payload;
+  buffer[0] = (char)s->state;
+  buffer[1] = (char)s->num_emphasis_delimiters_left;
+  return 2;
+}
+
+void tree_sitter_lmy_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
+  Scanner *s = (Scanner *)payload;
+  s->state = 0;
+  s->num_emphasis_delimiters_left = 0;
+  if (length >= 2) {
+    s->state = (uint8_t)buffer[0];
+    s->num_emphasis_delimiters_left = (uint8_t)buffer[1];
+  }
+}
+
+// ── Emphasis open/close detection ──
+// Follows the same approach as tree-sitter-markdown:
+// - Count the delimiter run (* or **)
+// - Store remaining count in state so each * gets its own token
+// - Opening: whitespace/start before, non-whitespace non-punctuation after
+// - Closing: no whitespace before, whitespace/end after
+// - Close takes precedence when both could apply (can't happen with our rules
+//   since whitespace_before is either true or false, making them exclusive)
+static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols,
+                           bool whitespace_before) {
+  lexer->advance(lexer, false);
+
+  // Continuing a delimiter run — we already decided open vs close
+  if (s->num_emphasis_delimiters_left > 0) {
+    if ((s->state & STATE_EMPHASIS_DELIMITER_IS_OPEN) &&
+        valid_symbols[EMPHASIS_OPEN]) {
+      lexer->result_symbol = EMPHASIS_OPEN;
+      s->num_emphasis_delimiters_left--;
+      return true;
+    }
+    if (valid_symbols[EMPHASIS_CLOSE]) {
+      lexer->result_symbol = EMPHASIS_CLOSE;
+      s->num_emphasis_delimiters_left--;
+      return true;
+    }
+  }
+
+  lexer->mark_end(lexer);
+
+  // Count consecutive stars
+  uint8_t star_count = 1;
+  while (lexer->lookahead == '*') {
+    star_count++;
+    lexer->advance(lexer, false);
+  }
+
+  s->num_emphasis_delimiters_left = star_count - 1;
+
+  bool line_end = lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+                  lexer->eof(lexer);
+  bool next_whitespace = line_end || lexer->lookahead == ' ' ||
+                         lexer->lookahead == '\t';
+  bool next_punctuation = is_punctuation(lexer->lookahead);
+
+  // Closing: no whitespace before the *, and previous wasn't punctuation
+  // or next is punctuation/whitespace (standard CommonMark right-flanking)
+  if (valid_symbols[EMPHASIS_CLOSE] && !whitespace_before) {
+    s->state &= ~STATE_EMPHASIS_DELIMITER_IS_OPEN;
+    lexer->result_symbol = EMPHASIS_CLOSE;
+    return true;
+  }
+
+  // Opening: whitespace/start before, next char is not whitespace and not
+  // punctuation. The punctuation check is what keeps globs like *.ts and
+  // **/*.tsx from being treated as emphasis openers.
+  if (valid_symbols[EMPHASIS_OPEN] && whitespace_before &&
+      !next_whitespace && !next_punctuation) {
+    s->state |= STATE_EMPHASIS_DELIMITER_IS_OPEN;
+    lexer->result_symbol = EMPHASIS_OPEN;
+    return true;
+  }
+
+  return false;
+}
 
 bool tree_sitter_lmy_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
   const bool *valid_symbols
 ) {
+  Scanner *s = (Scanner *)payload;
+
   if (valid_symbols[ERROR_SENTINEL]) return false;
 
   // ── Variable internals: no whitespace skip (must be adjacent) ──
@@ -273,6 +377,14 @@ bool tree_sitter_lmy_external_scanner_scan(
 
       return false;
     }
+  }
+
+  // ── Emphasis open/close ──
+  if ((valid_symbols[EMPHASIS_OPEN] || valid_symbols[EMPHASIS_CLOSE]) &&
+      lexer->lookahead == '*') {
+    bool whitespace_before = lexer->get_column(lexer) > column_before_skip ||
+                             column_before_skip == 0;
+    return parse_emphasis(s, lexer, valid_symbols, whitespace_before);
   }
 
   if (valid_symbols[TILDE_DELIMITER] && lexer->lookahead == '~') {
