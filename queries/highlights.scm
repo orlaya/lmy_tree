@@ -150,7 +150,7 @@
 ; ————————————————————————
 (fenced_code_delimiter) @punctuation
 (fenced_code_language) @punctuation
-(fenced_code_body) @string
+(fenced_code_body) @none
 
 
 ;
