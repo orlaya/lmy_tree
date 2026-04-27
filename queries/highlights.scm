@@ -138,7 +138,7 @@
 ;
 ; Headings (inside tilde blocks)
 ; ————————————————————————
-(heading_marker) @punctuation.special
+(heading_marker) @punctuation
 (heading_content) @title
 (heading (heading_content (emphasis) @title))
 (heading (heading_content (strong_emphasis) @title))
