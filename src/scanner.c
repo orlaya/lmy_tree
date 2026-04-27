@@ -20,8 +20,10 @@ enum TokenType {
   DONE_MARKER,         // xx (done list item prefix)
   TILDE_DELIMITER,     // ~~~
   TILDE_BODY,          // content between ~~~ markers (opaque for injection)
-  EMPHASIS_OPEN,       // * or ** opening delimiter
-  EMPHASIS_CLOSE,      // * or ** closing delimiter
+  EMPHASIS_OPEN,           // * or ** opening delimiter
+  EMPHASIS_CLOSE,          // * or ** closing delimiter
+  LAST_TOKEN_WHITESPACE,   // phantom — never emitted, context via valid_symbols
+  LAST_TOKEN_PUNCTUATION,  // phantom — never emitted, context via valid_symbols
   ERROR_SENTINEL,
 };
 
@@ -95,21 +97,21 @@ void tree_sitter_lmy_external_scanner_deserialize(void *payload, const char *buf
 }
 
 // ── Emphasis open/close detection ──
-// Follows the same approach as tree-sitter-markdown:
-// - Count the delimiter run (* or **)
-// - Store remaining count in state so each * gets its own token
-// - Opening: whitespace/start before, non-whitespace non-punctuation after
-// - Closing: no whitespace before, whitespace/end after
-// - Close takes precedence when both could apply (can't happen with our rules
-//   since whitespace_before is either true or false, making them exclusive)
-static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols,
-                           bool whitespace_before) {
+// Ported from tree-sitter-markdown's parse_star.
+// Context about what preceded the * comes via valid_symbols:
+//   LAST_TOKEN_WHITESPACE  — grammar places optional($._last_token_whitespace)
+//                            after whitespace-producing positions
+//   LAST_TOKEN_PUNCTUATION — grammar places optional($._last_token_punctuation)
+//                            after punctuation-producing positions
+// These phantom tokens never actually match input; they just signal context.
+static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols) {
   lexer->advance(lexer, false);
 
   // Continuing a delimiter run — we already decided open vs close
   if (s->num_emphasis_delimiters_left > 0) {
     if ((s->state & STATE_EMPHASIS_DELIMITER_IS_OPEN) &&
         valid_symbols[EMPHASIS_OPEN]) {
+      s->state &= ~STATE_EMPHASIS_DELIMITER_IS_OPEN;
       lexer->result_symbol = EMPHASIS_OPEN;
       s->num_emphasis_delimiters_left--;
       return true;
@@ -138,19 +140,25 @@ static bool parse_emphasis(Scanner *s, TSLexer *lexer, const bool *valid_symbols
                          lexer->lookahead == '\t';
   bool next_punctuation = is_punctuation(lexer->lookahead);
 
-  // Closing: no whitespace before the *, and previous wasn't punctuation
-  // or next is punctuation/whitespace (standard CommonMark right-flanking)
-  if (valid_symbols[EMPHASIS_CLOSE] && !whitespace_before) {
+  // Closing (right-flanking): previous token was NOT whitespace, and either
+  // previous wasn't punctuation, or next is punctuation/whitespace.
+  // Close takes precedence over open.
+  if (valid_symbols[EMPHASIS_CLOSE] &&
+      !valid_symbols[LAST_TOKEN_WHITESPACE] &&
+      (!valid_symbols[LAST_TOKEN_PUNCTUATION] ||
+       next_punctuation || next_whitespace)) {
     s->state &= ~STATE_EMPHASIS_DELIMITER_IS_OPEN;
     lexer->result_symbol = EMPHASIS_CLOSE;
     return true;
   }
 
-  // Opening: whitespace/start before, next char is not whitespace and not
-  // punctuation. The punctuation check is what keeps globs like *.ts and
-  // **/*.tsx from being treated as emphasis openers.
-  if (valid_symbols[EMPHASIS_OPEN] && whitespace_before &&
-      !next_whitespace && !next_punctuation) {
+  // Opening (left-flanking): next char is not whitespace, and either next
+  // is not punctuation, or previous was punctuation/whitespace.
+  if (valid_symbols[EMPHASIS_OPEN] &&
+      !next_whitespace &&
+      (!next_punctuation ||
+       valid_symbols[LAST_TOKEN_PUNCTUATION] ||
+       valid_symbols[LAST_TOKEN_WHITESPACE])) {
     s->state |= STATE_EMPHASIS_DELIMITER_IS_OPEN;
     lexer->result_symbol = EMPHASIS_OPEN;
     return true;
@@ -382,9 +390,7 @@ bool tree_sitter_lmy_external_scanner_scan(
   // ── Emphasis open/close ──
   if ((valid_symbols[EMPHASIS_OPEN] || valid_symbols[EMPHASIS_CLOSE]) &&
       lexer->lookahead == '*') {
-    bool whitespace_before = lexer->get_column(lexer) > column_before_skip ||
-                             column_before_skip == 0;
-    return parse_emphasis(s, lexer, valid_symbols, whitespace_before);
+    return parse_emphasis(s, lexer, valid_symbols);
   }
 
   if (valid_symbols[TILDE_DELIMITER] && lexer->lookahead == '~') {

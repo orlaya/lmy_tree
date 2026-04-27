@@ -26,6 +26,13 @@ export default grammar({
     $.tilde_body,
     $.emphasis_open,
     $.emphasis_close,
+    // Phantom tokens — never emitted by the scanner, but their presence in
+    // valid_symbols tells the scanner what preceded the current position.
+    // The grammar places optional($._last_token_whitespace) after whitespace
+    // and optional($._last_token_punctuation) after punctuation so the
+    // scanner can check valid_symbols[LAST_TOKEN_*] for context.
+    $._last_token_whitespace,
+    $._last_token_punctuation,
     $.error_sentinel,
   ],
 
@@ -137,18 +144,18 @@ export default grammar({
       $.fold_close,
     ),
 
-    fold_body: $ => repeat1(choice(
+    fold_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
       $.strong_emphasis,
       $.emphasis,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
-      '/',
+      seq('/', optional($._last_token_punctuation)),
       '$',
       '*',
       '`',
-      /\r?\n/,
-    )),
+      seq(/\r?\n/, optional($._last_token_whitespace)),
+    ))),
 
     multiline_preserve: $ => seq(
       $.preserve_delimiter,
@@ -156,18 +163,18 @@ export default grammar({
       $.preserve_delimiter,
     ),
 
-    preserve_body: $ => repeat1(choice(
+    preserve_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
       $.strong_emphasis,
       $.emphasis,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
-      '/',
+      seq('/', optional($._last_token_punctuation)),
       '$',
       '*',
       '`',
-      /\r?\n/,
-    )),
+      seq(/\r?\n/, optional($._last_token_whitespace)),
+    ))),
 
     // ~~~ markdown block ~~~
     // Always injects markdown. Body is an opaque scanner token
@@ -223,18 +230,21 @@ export default grammar({
       $.array_raw_value,
     ),
 
-    array_raw_value: $ => prec(-1, repeat1(choice(
-      $.strong_emphasis,
-      $.emphasis,
-      $.inline_code,
-      $.variable,
-      /[^,$*\/~`\n\r\[\]]+/,
-      '/',
-      '$',
-      '*',
-      '~',
-      '`',
-    ))),
+    array_raw_value: $ => prec(-1, seq(
+      optional($._last_token_whitespace),
+      repeat1(choice(
+        $.strong_emphasis,
+        $.emphasis,
+        $.inline_code,
+        $.variable,
+        /[^,$*\/~`\n\r\[\]]+/,
+        seq('/', optional($._last_token_punctuation)),
+        '$',
+        '*',
+        '~',
+        '`',
+      )),
+    )),
 
     variable: $ => seq(
       $.variable_dollar,
@@ -243,13 +253,14 @@ export default grammar({
     ),
 
     raw_value: $ => prec(-1, seq(
+      optional($._last_token_whitespace),
       choice(
         $.strong_emphasis,
         $.emphasis,
         $.inline_code,
         $.variable,
         /[^ \t$*\/~`\n\r\[]+/,
-        '/',
+        seq('/', optional($._last_token_punctuation)),
         '$',
         '*',
         '~',
@@ -261,7 +272,7 @@ export default grammar({
         $.inline_code,
         $.variable,
         /[^$*\/~`\n\r]+/,
-        '/',
+        seq('/', optional($._last_token_punctuation)),
         '$',
         '*',
         '~',
@@ -272,6 +283,7 @@ export default grammar({
     // *italic*
     emphasis: $ => prec.dynamic(1, seq(
       alias($.emphasis_open, $.emphasis_delimiter),
+      optional($._last_token_punctuation),
       $._emphasis_content,
       alias($.emphasis_close, $.emphasis_delimiter),
     )),
@@ -280,6 +292,7 @@ export default grammar({
     strong_emphasis: $ => prec.dynamic(2, seq(
       alias($.emphasis_open, $.emphasis_delimiter),
       alias($.emphasis_open, $.emphasis_delimiter),
+      optional($._last_token_punctuation),
       $._emphasis_content,
       alias($.emphasis_close, $.emphasis_delimiter),
       alias($.emphasis_close, $.emphasis_delimiter),
@@ -290,10 +303,10 @@ export default grammar({
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
-      '/',
+      seq('/', optional($._last_token_punctuation)),
       '$',
       '`',
-      /\r?\n/,
+      seq(/\r?\n/, optional($._last_token_whitespace)),
     )),
 
     // `inline code`
