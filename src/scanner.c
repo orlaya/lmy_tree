@@ -19,6 +19,7 @@ enum TokenType {
   INJECTION_DELIMITER, // ~~
   DONE_MARKER,         // xx (done list item prefix)
   TILDE_DELIMITER,     // ~~~
+  HEADING_MARKER,      // # through ###### at column 0 followed by space
   EMPHASIS_OPEN,               // * or ** opening — single-line (peeks for close)
   EMPHASIS_CLOSE,              // * or ** closing — single-line
   EMPHASIS_OPEN_MULTILINE,     // * or ** opening — multi-line (no peek)
@@ -400,6 +401,24 @@ bool tree_sitter_lmy_external_scanner_scan(
 
       return false;
     }
+  }
+
+  // ── Heading marker: # through ###### at column 0 ──
+  if (valid_symbols[HEADING_MARKER] && column_before_skip == 0 &&
+      lexer->lookahead == '#') {
+    uint8_t hash_count = 0;
+    while (lexer->lookahead == '#' && hash_count < 7) {
+      lexer->advance(lexer, false);
+      hash_count++;
+    }
+    lexer->mark_end(lexer);
+    // 1-6 hashes followed by space/tab — it's a heading
+    if (hash_count >= 1 && hash_count <= 6 &&
+        (lexer->lookahead == ' ' || lexer->lookahead == '\t')) {
+      lexer->result_symbol = HEADING_MARKER;
+      return true;
+    }
+    return false;
   }
 
   // ── Emphasis open/close ──

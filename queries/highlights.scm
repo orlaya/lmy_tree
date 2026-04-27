@@ -136,6 +136,16 @@
 
 ;
 ;
+; Headings (inside tilde blocks)
+; ————————————————————————
+(heading_marker) @punctuation.special
+(heading_content) @text.title
+(heading (heading_content (emphasis) @text.title))
+(heading (heading_content (strong_emphasis) @text.title))
+
+
+;
+;
 ; Inline formatting
 ; ————————————————————————
 (inline_code) @text.literal

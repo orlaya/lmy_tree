@@ -23,6 +23,7 @@ export default grammar({
     $.injection_delimiter,
     $.done_marker,
     $.tilde_delimiter,
+    $.heading_marker,
     $.emphasis_open,
     $.emphasis_close,
     $.emphasis_open_multiline,
@@ -53,6 +54,8 @@ export default grammar({
     [$.preserve_body, $.strong_emphasis_multiline],
     [$.tilde_body, $.emphasis_multiline],
     [$.tilde_body, $.strong_emphasis_multiline],
+    [$.heading_content, $.emphasis],
+    [$.heading_content, $.strong_emphasis],
   ],
 
   rules: {
@@ -203,6 +206,7 @@ export default grammar({
     ),
 
     tilde_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
+      $.heading,
       $.strong_emphasis_multiline,
       $.emphasis_multiline,
       $.inline_code,
@@ -218,17 +222,24 @@ export default grammar({
       seq(/\r?\n/, optional($._last_token_whitespace)),
     ))),
 
-    _line_content: $ => repeat1(choice(
+    // # Heading through ###### Heading — only inside tilde blocks, at column 0
+    heading: $ => prec.right(seq(
+      $.heading_marker,
+      optional($.heading_content),
+    )),
+
+    heading_content: $ => prec.right(repeat1(choice(
       $.strong_emphasis,
       $.emphasis,
       $.inline_code,
       $.variable,
       /[^$*\/`\n\r]+/,
-      '/',
+      seq('/', optional($._last_token_punctuation)),
       '$',
+      $.emphasis_open,
       '*',
       '`',
-    )),
+    ))),
 
     _value: $ => choice(
       seq($.language_tag, $.injection_delimiter, $._injectable_value),

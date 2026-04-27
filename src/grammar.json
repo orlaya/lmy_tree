@@ -750,6 +750,10 @@
             "members": [
               {
                 "type": "SYMBOL",
+                "name": "heading"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "strong_emphasis_multiline"
               },
               {
@@ -839,48 +843,98 @@
         }
       ]
     },
-    "_line_content": {
-      "type": "REPEAT1",
+    "heading": {
+      "type": "PREC_RIGHT",
+      "value": 0,
       "content": {
-        "type": "CHOICE",
+        "type": "SEQ",
         "members": [
           {
             "type": "SYMBOL",
-            "name": "strong_emphasis"
+            "name": "heading_marker"
           },
           {
-            "type": "SYMBOL",
-            "name": "emphasis"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "inline_code"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "variable"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^$*\\/`\\n\\r]+"
-          },
-          {
-            "type": "STRING",
-            "value": "/"
-          },
-          {
-            "type": "STRING",
-            "value": "$"
-          },
-          {
-            "type": "STRING",
-            "value": "*"
-          },
-          {
-            "type": "STRING",
-            "value": "`"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "heading_content"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
+      }
+    },
+    "heading_content": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "REPEAT1",
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "strong_emphasis"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "emphasis"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "inline_code"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "variable"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[^$*\\/`\\n\\r]+"
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "/"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_last_token_punctuation"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": "$"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "emphasis_open"
+            },
+            {
+              "type": "STRING",
+              "value": "*"
+            },
+            {
+              "type": "STRING",
+              "value": "`"
+            }
+          ]
+        }
       }
     },
     "_value": {
@@ -1927,6 +1981,14 @@
     [
       "tilde_body",
       "strong_emphasis_multiline"
+    ],
+    [
+      "heading_content",
+      "emphasis"
+    ],
+    [
+      "heading_content",
+      "strong_emphasis"
     ]
   ],
   "precedences": [],
@@ -2002,6 +2064,10 @@
     {
       "type": "SYMBOL",
       "name": "tilde_delimiter"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "heading_marker"
     },
     {
       "type": "SYMBOL",
