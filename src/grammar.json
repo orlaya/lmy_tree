@@ -844,28 +844,32 @@
       ]
     },
     "heading": {
-      "type": "PREC_RIGHT",
-      "value": 0,
+      "type": "PREC_DYNAMIC",
+      "value": 3,
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "heading_marker"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "heading_content"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
+        "type": "PREC_RIGHT",
+        "value": 0,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "heading_marker"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "heading_content"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        }
       }
     },
     "heading_content": {

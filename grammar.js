@@ -223,10 +223,12 @@ export default grammar({
     ))),
 
     // # Heading through ###### Heading — only inside tilde blocks, at column 0
-    heading: $ => prec.right(seq(
+    // prec.dynamic(3) so emphasis inside headings wins over tilde_body's
+    // multiline emphasis (which sits at prec.dynamic 1/2)
+    heading: $ => prec.dynamic(3, prec.right(seq(
       $.heading_marker,
       optional($.heading_content),
-    )),
+    ))),
 
     heading_content: $ => prec.right(repeat1(choice(
       $.strong_emphasis,
