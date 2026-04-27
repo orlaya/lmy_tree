@@ -43,23 +43,16 @@ export default grammar({
   ],
 
   conflicts: $ => [
-    [$.emphasis, $.strong_emphasis],
-    [$.emphasis_multiline, $.strong_emphasis_multiline],
     [$.raw_value, $.emphasis],
     [$.raw_value, $.strong_emphasis],
-    [$.raw_value, $.emphasis, $.strong_emphasis],
     [$.array_raw_value, $.emphasis],
     [$.array_raw_value, $.strong_emphasis],
-    [$.array_raw_value, $.emphasis, $.strong_emphasis],
     [$.fold_body, $.emphasis_multiline],
     [$.fold_body, $.strong_emphasis_multiline],
-    [$.fold_body, $.emphasis_multiline, $.strong_emphasis_multiline],
     [$.preserve_body, $.emphasis_multiline],
     [$.preserve_body, $.strong_emphasis_multiline],
-    [$.preserve_body, $.emphasis_multiline, $.strong_emphasis_multiline],
     [$.tilde_body, $.emphasis_multiline],
     [$.tilde_body, $.strong_emphasis_multiline],
-    [$.tilde_body, $.emphasis_multiline, $.strong_emphasis_multiline],
   ],
 
   rules: {
