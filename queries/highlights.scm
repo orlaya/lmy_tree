@@ -200,6 +200,7 @@
 (preserve_body) @string
 
 (tilde_delimiter) @punctuation
+(tilde_body) @text
 
 
 ;
