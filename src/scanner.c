@@ -511,7 +511,12 @@ bool tree_sitter_lmy_external_scanner_scan(
   }
 
   // ── Fenced code delimiter: ``` (exactly three backticks) ──
-  if (valid_symbols[FENCED_CODE_DELIMITER] && lexer->lookahead == '`') {
+  // Only fires when ``` is at the start of a line (possibly indented). A
+  // bare ``` mid-prose stays plain text — otherwise inline mentions like
+  // "no ```xyz code blocks here" inside a fold body would be misparsed as
+  // an opening fence.
+  if (valid_symbols[FENCED_CODE_DELIMITER] && lexer->lookahead == '`' &&
+      column_before_skip == 0) {
     lexer->advance(lexer, false);
     if (lexer->lookahead == '`') {
       lexer->advance(lexer, false);
