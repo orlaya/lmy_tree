@@ -334,23 +334,33 @@ bool tree_sitter_lmy_external_scanner_scan(
   }
 
   // ── Fenced code body: opaque blob, consumes until ``` at start of line ──
+  // The closing fence may be preceded by any amount of whitespace (spaces or
+  // tabs) — fenced blocks inside indented folds/preserves naturally indent
+  // their close. Only whitespace is allowed before the ``` on that line.
   if (valid_symbols[FENCED_CODE_BODY]) {
-    // Consume everything until we see ``` at column 0
     while (!lexer->eof(lexer)) {
       if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
         // Consume the newline
         if (lexer->lookahead == '\r') lexer->advance(lexer, false);
         if (lexer->lookahead == '\n') lexer->advance(lexer, false);
-        // Check if next line starts with ```
+        // Mark end of body BEFORE consuming any leading whitespace on the
+        // candidate close line — the whitespace and ``` belong to the
+        // following FENCED_CODE_DELIMITER token, not to the body.
+        lexer->mark_end(lexer);
+        // Skip leading whitespace on the new line
+        while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+          lexer->advance(lexer, false);
+        }
+        // Check for ``` (exactly three)
         if (lexer->lookahead == '`') {
-          lexer->mark_end(lexer);
           lexer->advance(lexer, false);
           if (lexer->lookahead == '`') {
             lexer->advance(lexer, false);
             if (lexer->lookahead == '`') {
               lexer->advance(lexer, false);
-              // Exactly three — not four+
               if (lexer->lookahead != '`') {
+                // Confirmed close — body ends at the start of this line
+                // (mark_end was already set above).
                 lexer->result_symbol = FENCED_CODE_BODY;
                 return true;
               }

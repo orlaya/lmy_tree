@@ -180,6 +180,7 @@ export default grammar({
     // Shared inline content for folds and preserves.
     // No ~/#/- exclusions — those chars are plain text inside << >> and || ||.
     _multiline_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
+      $.fenced_code_block,
       $.strong_emphasis_multiline,
       $.emphasis_multiline,
       $.inline_code,

@@ -287,6 +287,10 @@
           "named": true
         },
         {
+          "type": "fenced_code_block",
+          "named": true
+        },
+        {
           "type": "inline_code",
           "named": true
         },
@@ -579,6 +583,10 @@
         },
         {
           "type": "emphasis_open_multiline",
+          "named": true
+        },
+        {
+          "type": "fenced_code_block",
           "named": true
         },
         {

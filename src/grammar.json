@@ -540,6 +540,10 @@
             "members": [
               {
                 "type": "SYMBOL",
+                "name": "fenced_code_block"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "strong_emphasis_multiline"
               },
               {
