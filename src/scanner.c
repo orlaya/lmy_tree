@@ -333,10 +333,12 @@ bool tree_sitter_lmy_external_scanner_scan(
     return true;
   }
 
-  // ── Fenced code body: opaque blob, consumes until ``` at start of line ──
+  // ── Fenced code body: opaque blob, consumes until ```+ at start of line ──
   // The closing fence may be preceded by any amount of whitespace (spaces or
   // tabs) — fenced blocks inside indented folds/preserves naturally indent
-  // their close. Only whitespace is allowed before the ``` on that line.
+  // their close. Only whitespace is allowed before the fence on that line.
+  // Three or more backticks closes the fence — many editors auto-insert
+  // extra backticks, so we don't insist on exactly three.
   if (valid_symbols[FENCED_CODE_BODY]) {
     while (!lexer->eof(lexer)) {
       if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
@@ -344,27 +346,25 @@ bool tree_sitter_lmy_external_scanner_scan(
         if (lexer->lookahead == '\r') lexer->advance(lexer, false);
         if (lexer->lookahead == '\n') lexer->advance(lexer, false);
         // Mark end of body BEFORE consuming any leading whitespace on the
-        // candidate close line — the whitespace and ``` belong to the
+        // candidate close line — the whitespace and backticks belong to the
         // following FENCED_CODE_DELIMITER token, not to the body.
         lexer->mark_end(lexer);
         // Skip leading whitespace on the new line
         while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
           lexer->advance(lexer, false);
         }
-        // Check for ``` (exactly three)
+        // Count backticks — three or more closes the fence
         if (lexer->lookahead == '`') {
-          lexer->advance(lexer, false);
-          if (lexer->lookahead == '`') {
+          uint8_t backtick_count = 0;
+          while (lexer->lookahead == '`') {
             lexer->advance(lexer, false);
-            if (lexer->lookahead == '`') {
-              lexer->advance(lexer, false);
-              if (lexer->lookahead != '`') {
-                // Confirmed close — body ends at the start of this line
-                // (mark_end was already set above).
-                lexer->result_symbol = FENCED_CODE_BODY;
-                return true;
-              }
-            }
+            backtick_count++;
+          }
+          if (backtick_count >= 3) {
+            // Confirmed close — body ends at the start of this line
+            // (mark_end was already set above).
+            lexer->result_symbol = FENCED_CODE_BODY;
+            return true;
           }
         }
         continue;
@@ -510,25 +510,23 @@ bool tree_sitter_lmy_external_scanner_scan(
     }
   }
 
-  // ── Fenced code delimiter: ``` (exactly three backticks) ──
-  // Only fires when ``` is at the start of a line (possibly indented). A
-  // bare ``` mid-prose stays plain text — otherwise inline mentions like
-  // "no ```xyz code blocks here" inside a fold body would be misparsed as
-  // an opening fence.
+  // ── Fenced code delimiter: three or more backticks ──
+  // Only fires at the start of a line (possibly indented). A bare ``` mid-
+  // prose stays plain text — otherwise inline mentions like "no ```xyz code
+  // blocks here" inside a fold body would be misparsed as an opening fence.
+  // Accepts any run of 3+ backticks because many editors auto-insert extra
+  // backticks when typing fences, and the count carries no meaning here.
   if (valid_symbols[FENCED_CODE_DELIMITER] && lexer->lookahead == '`' &&
       column_before_skip == 0) {
-    lexer->advance(lexer, false);
-    if (lexer->lookahead == '`') {
+    uint8_t backtick_count = 0;
+    while (lexer->lookahead == '`') {
       lexer->advance(lexer, false);
-      if (lexer->lookahead == '`') {
-        lexer->advance(lexer, false);
-        lexer->mark_end(lexer);
-        // Exactly three — not four+
-        if (lexer->lookahead != '`') {
-          lexer->result_symbol = FENCED_CODE_DELIMITER;
-          return true;
-        }
-      }
+      backtick_count++;
+    }
+    if (backtick_count >= 3) {
+      lexer->mark_end(lexer);
+      lexer->result_symbol = FENCED_CODE_DELIMITER;
+      return true;
     }
     return false;
   }
