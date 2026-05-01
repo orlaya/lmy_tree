@@ -109,6 +109,9 @@ export default grammar({
     // ────────────────────────────────
 
     // verify ombre::{ PNPM_CATALOGS, PNPM_SETTINGS }
+    // Brace list may wrap across lines:
+    //   verify ombre::{ Foo,
+    //            Bar, Baz }
     verify_statement: $ => prec.right(seq(
       'verify',
       $.path,
@@ -116,13 +119,14 @@ export default grammar({
         '::',
         optional(seq(
           '{',
-          commaSep($.identifier),
+          commaSepMultiline($.identifier),
           optional('}'),
         )),
       )),
     )),
 
     // import vite::{defineConfig}
+    // Brace list may wrap across lines (see verify_statement).
     import_statement: $ => prec.right(seq(
       'import',
       $.path,
@@ -130,7 +134,7 @@ export default grammar({
         '::',
         optional(seq(
           '{',
-          commaSep($.identifier),
+          commaSepMultiline($.identifier),
           optional('}'),
         )),
       )),
@@ -480,4 +484,20 @@ export default grammar({
  */
 function commaSep(rule) {
   return optional(seq(rule, repeat(seq(',', rule))))
+}
+
+/**
+ * @param {RuleOrLiteral} rule
+ * Like commaSep, but tolerates newlines around items and separators —
+ * for braced lists in import/verify that may wrap across multiple lines.
+ */
+function commaSepMultiline(rule) {
+  const NL = /\r?\n/
+  return optional(seq(
+    optional(NL),
+    rule,
+    repeat(seq(optional(NL), ',', optional(NL), rule)),
+    optional(NL),
+    optional(seq(',', optional(NL))),
+  ))
 }
