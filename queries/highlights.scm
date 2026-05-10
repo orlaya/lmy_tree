@@ -123,11 +123,14 @@
 ; Variables
 ; ————————————————————————
 (variable_dollar) @punctuation
+(interpolation_dollar) @punctuation
 ; (variable_dollar) @punctuation.special
 (variable_qualifier) @label
 ; (variable_qualifier) @property
 (variable_dot) @punctuation.delimiter
 (variable_segment) @variable
+(interpolated_variable "{" @punctuation.bracket)
+(interpolated_variable "}" @punctuation.bracket)
 
 
 ;

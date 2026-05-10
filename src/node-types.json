@@ -63,6 +63,10 @@
           "named": true
         },
         {
+          "type": "interpolated_variable",
+          "named": true
+        },
+        {
           "type": "strong_emphasis",
           "named": true
         },
@@ -218,6 +222,10 @@
           "named": true
         },
         {
+          "type": "interpolated_variable",
+          "named": true
+        },
+        {
           "type": "variable",
           "named": true
         }
@@ -238,6 +246,10 @@
         },
         {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "interpolated_variable",
           "named": true
         },
         {
@@ -295,6 +307,10 @@
           "named": true
         },
         {
+          "type": "interpolated_variable",
+          "named": true
+        },
+        {
           "type": "strong_emphasis_multiline",
           "named": true
         },
@@ -342,6 +358,10 @@
         },
         {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "interpolated_variable",
           "named": true
         },
         {
@@ -424,6 +444,33 @@
         },
         {
           "type": "version",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "interpolated_variable",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "interpolation_dollar",
+          "named": true
+        },
+        {
+          "type": "variable_dot",
+          "named": true
+        },
+        {
+          "type": "variable_qualifier",
+          "named": true
+        },
+        {
+          "type": "variable_segment",
           "named": true
         }
       ]
@@ -594,6 +641,10 @@
           "named": true
         },
         {
+          "type": "interpolated_variable",
+          "named": true
+        },
+        {
           "type": "strong_emphasis_multiline",
           "named": true
         },
@@ -622,6 +673,10 @@
         },
         {
           "type": "inline_code",
+          "named": true
+        },
+        {
+          "type": "interpolated_variable",
           "named": true
         },
         {
@@ -794,6 +849,21 @@
     }
   },
   {
+    "type": "string",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "interpolated_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "strong_emphasis",
     "named": true,
     "fields": {},
@@ -887,6 +957,10 @@
           "named": true
         },
         {
+          "type": "interpolated_variable",
+          "named": true
+        },
+        {
           "type": "list_item",
           "named": true
         },
@@ -977,6 +1051,10 @@
         }
       ]
     }
+  },
+  {
+    "type": "\"",
+    "named": false
   },
   {
     "type": "#",
@@ -1091,6 +1169,10 @@
     "named": true
   },
   {
+    "type": "interpolation_dollar",
+    "named": true
+  },
+  {
     "type": "key",
     "named": true
   },
@@ -1116,10 +1198,6 @@
   },
   {
     "type": "preserve_delimiter",
-    "named": true
-  },
-  {
-    "type": "string",
     "named": true
   },
   {

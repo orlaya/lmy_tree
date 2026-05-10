@@ -9,6 +9,7 @@ export default grammar({
     $.fold_close,
     $.preserve_delimiter,
     $.variable_dollar,
+    $.interpolation_dollar,
     $.variable_qualifier,
     $.variable_segment,
     $.variable_dot,
@@ -188,6 +189,7 @@ export default grammar({
       $.strong_emphasis_multiline,
       $.emphasis_multiline,
       $.inline_code,
+      $.interpolated_variable,
       $.variable,
       /[^$*\/`\n\r]+/,
       seq('/', optional($._last_token_punctuation)),
@@ -217,6 +219,7 @@ export default grammar({
       $.strong_emphasis_multiline,
       $.emphasis_multiline,
       $.inline_code,
+      $.interpolated_variable,
       $.variable,
       /[^$*\/`\n\r~#]+/,
       seq('/', optional($._last_token_punctuation)),
@@ -241,6 +244,7 @@ export default grammar({
       $.strong_emphasis,
       $.emphasis,
       $.inline_code,
+      $.interpolated_variable,
       $.variable,
       /[^$*\/`\n\r]+/,
       seq('/', optional($._last_token_punctuation)),
@@ -301,6 +305,7 @@ export default grammar({
         $.strong_emphasis,
         $.emphasis,
         $.inline_code,
+        $.interpolated_variable,
         $.variable,
         /[^,$*\/~`\n\r\[\]]+/,
         seq('/', optional($._last_token_punctuation)),
@@ -314,6 +319,17 @@ export default grammar({
 
     variable: $ => seq(
       $.variable_dollar,
+      $._variable_path,
+    ),
+
+    interpolated_variable: $ => seq(
+      $.interpolation_dollar,
+      '{',
+      $._variable_path,
+      '}',
+    ),
+
+    _variable_path: $ => seq(
       repeat(seq($.variable_qualifier, $.variable_dot)),
       $.variable_segment,
     ),
@@ -329,8 +345,9 @@ export default grammar({
         $.strong_emphasis,
         $.emphasis,
         $.inline_code,
+        $.interpolated_variable,
         $.variable,
-        /[^ \t$*\/~`\n\r\[]+/,
+        /[^ \t"$*\/~`\n\r\[]+/,
         seq('/', optional($._last_token_punctuation)),
         '$',
         $.emphasis_open,
@@ -342,6 +359,7 @@ export default grammar({
         $.strong_emphasis,
         $.emphasis,
         $.inline_code,
+        $.interpolated_variable,
         $.variable,
         /[^$*\/`\n\r~#]+/,
         seq('/', optional($._last_token_punctuation)),
@@ -374,6 +392,7 @@ export default grammar({
     // Single-line only — no newlines allowed
     _emphasis_content: $ => repeat1(choice(
       $.inline_code,
+      $.interpolated_variable,
       $.variable,
       /[^$*\/`\n\r]+/,
       seq('/', optional($._last_token_punctuation)),
@@ -401,6 +420,7 @@ export default grammar({
     // Multi-line — allows newlines
     _emphasis_content_multiline: $ => repeat1(choice(
       $.inline_code,
+      $.interpolated_variable,
       $.variable,
       /[^$*\/`\n\r]+/,
       seq('/', optional($._last_token_punctuation)),
@@ -413,7 +433,16 @@ export default grammar({
     inline_code: $ => token(prec(2, seq('`', /[^`\n\r]+/, '`'))),
 
     // "quoted string"
-    string: $ => /"[^"\n]*"/,
+    // Bare $ stays literal inside quotes — only ${...} becomes a variable node.
+    string: $ => seq(
+      '"',
+      repeat(choice(
+        $.interpolated_variable,
+        /[^"$\n\r]+/,
+        '$',
+      )),
+      '"',
+    ),
 
     // true / false
     boolean: $ => choice('true', 'false'),

@@ -5,6 +5,7 @@ enum TokenType {
   FOLD_CLOSE,          // >>
   PRESERVE_DELIMITER,  // ||
   VARIABLE_DOLLAR,     // $
+  INTERPOLATION_DOLLAR, // $ in ${...}
   VARIABLE_QUALIFIER,  // namespace segment before dot (sv in $sv.FOO)
   VARIABLE_SEGMENT,    // final identifier segment (FOO in $sv.FOO, or BAR in $BAR)
   VARIABLE_DOT,        // . between segments
@@ -654,10 +655,17 @@ bool tree_sitter_lmy_external_scanner_scan(
     }
   }
 
-  if (valid_symbols[VARIABLE_DOLLAR] && lexer->lookahead == '$') {
+  if ((valid_symbols[INTERPOLATION_DOLLAR] || valid_symbols[VARIABLE_DOLLAR]) &&
+      lexer->lookahead == '$') {
     lexer->advance(lexer, false);
     lexer->mark_end(lexer);
-    if (is_segment_start(lexer->lookahead)) {
+
+    if (valid_symbols[INTERPOLATION_DOLLAR] && lexer->lookahead == '{') {
+      lexer->result_symbol = INTERPOLATION_DOLLAR;
+      return true;
+    }
+
+    if (valid_symbols[VARIABLE_DOLLAR] && is_segment_start(lexer->lookahead)) {
       lexer->result_symbol = VARIABLE_DOLLAR;
       return true;
     }
