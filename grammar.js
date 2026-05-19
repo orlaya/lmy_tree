@@ -2,509 +2,592 @@
 // @ts-check
 
 export default grammar({
-  name: 'lmy',
+   name: 'lmy',
 
-  externals: $ => [
-    $.fold_open,
-    $.fold_close,
-    $.preserve_delimiter,
-    $.variable_dollar,
-    $.interpolation_dollar,
-    $.variable_qualifier,
-    $.variable_segment,
-    $.variable_dot,
-    $.key,
-    $.version_prefix,
-    $.version_digits,
-    $.version_dot,
-    $.version_dash,
-    $.version_tag,
-    $.number,
-    $.language_tag,
-    $.injection_delimiter,
-    $.done_marker,
-    $.list_marker,
-    $.in_progress_marker,
-    $.tilde_delimiter,
-    $.heading_marker,
-    $.fenced_code_delimiter,
-    $.fenced_code_body,
-    $.emphasis_open,
-    $.emphasis_close,
-    $.emphasis_open_multiline,
-    $.emphasis_close_multiline,
-    // Phantom tokens — never emitted by the scanner, but their presence in
-    // valid_symbols tells the scanner what preceded the current position.
-    // The grammar places optional($._last_token_whitespace) after whitespace
-    // and optional($._last_token_punctuation) after punctuation so the
-    // scanner can check valid_symbols[LAST_TOKEN_*] for context.
-    $._last_token_whitespace,
-    $._last_token_punctuation,
-    $.error_sentinel,
-  ],
-
-  extras: $ => [
-    /[ \t]/,
-    $.comment,
-  ],
-
-  conflicts: $ => [
-    [$.raw_value, $.emphasis],
-    [$.raw_value, $.strong_emphasis],
-    [$.array_raw_value, $.emphasis],
-    [$.array_raw_value, $.strong_emphasis],
-    [$._multiline_body, $.emphasis_multiline],
-    [$._multiline_body, $.strong_emphasis_multiline],
-    [$.tilde_body, $.emphasis_multiline],
-    [$.tilde_body, $.strong_emphasis_multiline],
-    [$.heading_content, $.emphasis],
-    [$.heading_content, $.strong_emphasis],
-  ],
-
-  rules: {
-    source_file: $ => repeat(choice($._definition, '}', /\r?\n/)),
-
-    _definition: $ => choice(
-      $.section,
-      $.verify_statement,
-      $.import_statement,
-      $.scope_block,
-      $.scope_entry,
-      $.scope_return,
-      $.assignment,
-      $.list_item,
-      $.done_item,
-      $.in_progress_item,
-      $.tilde_block,
-    ),
-
-    //
-    //
-    //
-    // ────────────────────────────────
-
-    // [WORKSPACE] or [SCRIPT_VARIABLES] aka [sv]
-    section: $ => seq(
-      '[', $.identifier, ']',
-      optional(seq('aka', '[', $.identifier, ']')),
-    ),
-
-    // OUTPUT::{ ... }
-    scope_block: $ => seq(
-      field('name', $.identifier),
-      '::',
-      '{',
-      repeat(choice($._definition, /\r?\n/)),
-      '}',
-    ),
-
-    // server:: (entering nested scope)
-    scope_entry: $ => seq(field('name', $.identifier), '::'),
-
-    // :: (back to section root)
-    scope_return: $ => '::',
-
-    //
-    //
-    //
-    // ────────────────────────────────
-
-    // verify ombre::{ PNPM_CATALOGS, PNPM_SETTINGS }
-    // Brace list may wrap across lines:
-    //   verify ombre::{ Foo,
-    //            Bar, Baz }
-    verify_statement: $ => prec.right(seq(
-      'verify',
-      $.path,
-      optional(seq(
-        '::',
-        optional(seq(
-          '{',
-          commaSepMultiline($.identifier),
-          optional('}'),
-        )),
-      )),
-    )),
-
-    // import vite::{defineConfig}
-    // Brace list may wrap across lines (see verify_statement).
-    import_statement: $ => prec.right(seq(
-      'import',
-      $.path,
-      optional(seq(
-        '::',
-        optional(seq(
-          '{',
-          commaSepMultiline($.identifier),
-          optional('}'),
-        )),
-      )),
-    )),
-
-    // name: orlaya  OR  catalogs: (value optional for list headers)
-    // prec.right = prefer to grab the value when there's ambiguity
-    assignment: $ => prec.right(seq(
-      field('key', $.key),
-      ':',
-      optional(field('value', $._value)),
-    )),
-
-    // -- coreWorkspace
-    list_item: $ => seq($.list_marker, $._value),
-
-    // xx done!
-    done_item: $ => seq($.done_marker, $._value),
-
-    // == in progress
-    in_progress_item: $ => seq($.in_progress_marker, $._value),
-
-    // // comment text
-    comment: $ => seq('//', /.*/),
-
-    //
-    //
-    //
-    // ────────────────────────────────
-
-    multiline_fold: $ => seq(
+   externals: ($) => [
       $.fold_open,
-      optional($.fold_body),
       $.fold_close,
-    ),
-
-    fold_body: $ => $._multiline_body,
-
-    multiline_preserve: $ => seq(
       $.preserve_delimiter,
-      optional($.preserve_body),
-      $.preserve_delimiter,
-    ),
-
-    preserve_body: $ => $._multiline_body,
-
-    // Shared inline content for folds and preserves.
-    // No ~/#/- exclusions — those chars are plain text inside << >> and || ||.
-    _multiline_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
-      $.fenced_code_block,
-      $.strong_emphasis_multiline,
-      $.emphasis_multiline,
-      $.inline_code,
-      $.interpolated_variable,
-      $.variable,
-      /[^$*\/`\n\r]+/,
-      seq('/', optional($._last_token_punctuation)),
-      '$',
-      $.emphasis_open_multiline,
-      '*',
-      '`',
-      seq(/\r?\n/, optional($._last_token_whitespace)),
-    ))),
-
-    // ~~~ rich text block ~~~
-    // Excludes ~ and # from text regex — they have dedicated scanner tokens
-    // (tilde_delimiter, heading_marker) that need first crack at them.
-    tilde_block: $ => seq(
-      $.tilde_delimiter,
-      /\r?\n/,
-      optional($.tilde_body),
-      $.tilde_delimiter,
-    ),
-
-    tilde_body: $ => seq(optional($._last_token_whitespace), repeat1(choice(
-      $.heading,
-      $.fenced_code_block,
-      $.list_item,
-      $.done_item,
-      $.in_progress_item,
-      $.strong_emphasis_multiline,
-      $.emphasis_multiline,
-      $.inline_code,
-      $.interpolated_variable,
-      $.variable,
-      /[^$*\/`\n\r~#]+/,
-      seq('/', optional($._last_token_punctuation)),
-      '$',
-      $.emphasis_open_multiline,
-      '*',
-      '`',
-      '~',
-      '#',
-      seq(/\r?\n/, optional($._last_token_whitespace)),
-    ))),
-
-    // # Heading through ###### Heading — only inside tilde blocks, at column 0
-    // prec.dynamic(3) so emphasis inside headings wins over tilde_body's
-    // multiline emphasis (which sits at prec.dynamic 1/2)
-    heading: $ => prec.dynamic(3, prec.right(seq(
-      $.heading_marker,
-      optional($.heading_content),
-    ))),
-
-    heading_content: $ => prec.right(repeat1(choice(
-      $.strong_emphasis,
-      $.emphasis,
-      $.inline_code,
-      $.interpolated_variable,
-      $.variable,
-      /[^$*\/`\n\r]+/,
-      seq('/', optional($._last_token_punctuation)),
-      '$',
-      $.emphasis_open,
-      '*',
-      '`',
-    ))),
-
-    // ```ts ... ``` — fenced code block, only inside tilde blocks
-    // Body is opaque for language injection. Language tag is optional.
-    fenced_code_block: $ => seq(
-      $.fenced_code_delimiter,
-      optional($.fenced_code_language),
-      /\r?\n/,
-      optional($.fenced_code_body),
-      $.fenced_code_delimiter,
-    ),
-
-    fenced_code_language: $ => /[a-zA-Z]\w*/,
-
-    _value: $ => choice(
-      seq($.language_tag, $.injection_delimiter, $._injectable_value),
-      $._injectable_value,
-    ),
-
-    _injectable_value: $ => choice(
-      $.multiline_fold,
-      $.multiline_preserve,
-      $.array,
-      $.string,
-      $.boolean,
-      $.version,
-      $.number,
-      prec(-1, $.raw_value),
-    ),
-
-    array: $ => prec(1, seq('[', commaSep($._array_value), ']')),
-
-    _array_value: $ => choice(
-      seq($.language_tag, $.injection_delimiter, $._injectable_array_value),
-      $._injectable_array_value,
-    ),
-
-    _injectable_array_value: $ => choice(
-      $.array,
-      $.string,
-      $.boolean,
-      $.version,
-      $.number,
-      $.array_raw_value,
-    ),
-
-    // Excludes , [ ] from text regex — array delimiters.
-    array_raw_value: $ => prec(-1, seq(
-      optional($._last_token_whitespace),
-      repeat1(choice(
-        $.strong_emphasis,
-        $.emphasis,
-        $.inline_code,
-        $.interpolated_variable,
-        $.variable,
-        /[^,$*\/~`\n\r\[\]]+/,
-        seq('/', optional($._last_token_punctuation)),
-        '$',
-        $.emphasis_open,
-        '*',
-        '~',
-        '`',
-      )),
-    )),
-
-    variable: $ => seq(
       $.variable_dollar,
-      $._variable_path,
-    ),
-
-    interpolated_variable: $ => seq(
       $.interpolation_dollar,
-      '{',
-      $._variable_path,
-      '}',
-    ),
-
-    _variable_path: $ => seq(
-      repeat(seq($.variable_qualifier, $.variable_dot)),
+      $.variable_qualifier,
       $.variable_segment,
-    ),
-
-    // First choice excludes space/tab/[ so it stops at word boundary and
-    // doesn't eat array opens. Repeat allows spaces for multi-word values.
-    // Repeat regex matches tilde_body's regex exactly (excludes ~ #) so
-    // tree-sitter merges them into one lexer terminal — without this,
-    // tilde_body's regex wins and raw_value truncates after one word.
-    raw_value: $ => prec.right(seq(
-      optional($._last_token_whitespace),
-      choice(
-        $.strong_emphasis,
-        $.emphasis,
-        $.inline_code,
-        $.interpolated_variable,
-        $.variable,
-        /[^ \t"$*\/~`\n\r\[]+/,
-        seq('/', optional($._last_token_punctuation)),
-        '$',
-        $.emphasis_open,
-        '*',
-        '~',
-        '`',
-      ),
-      repeat(choice(
-        $.strong_emphasis,
-        $.emphasis,
-        $.inline_code,
-        $.interpolated_variable,
-        $.variable,
-        /[^$*\/`\n\r~#]+/,
-        seq('/', optional($._last_token_punctuation)),
-        '$',
-        $.emphasis_open,
-        '*',
-        '~',
-        '`',
-        '#',
-      )),
-    )),
-
-    // ── Single-line emphasis (raw_value, array_raw_value) ──
-
-    // *italic*
-    emphasis: $ => prec.dynamic(1, seq(
-      alias($.emphasis_open, $.emphasis_delimiter),
-      optional($._last_token_punctuation),
-      $._emphasis_content,
-      alias($.emphasis_close, $.emphasis_delimiter),
-    )),
-
-    // **bold** — nests emphasis inside, so **text* degrades to italic
-    strong_emphasis: $ => prec.dynamic(2, seq(
-      alias($.emphasis_open, $.emphasis_delimiter),
-      $.emphasis,
-      alias($.emphasis_close, $.emphasis_delimiter),
-    )),
-
-    // Single-line only — no newlines allowed
-    _emphasis_content: $ => repeat1(choice(
-      $.inline_code,
-      $.interpolated_variable,
-      $.variable,
-      /[^$*\/`\n\r]+/,
-      seq('/', optional($._last_token_punctuation)),
-      '$',
-      '`',
-    )),
-
-    // ── Multi-line emphasis (fold_body, preserve_body, tilde_body) ──
-
-    // *italic* (can span lines)
-    emphasis_multiline: $ => prec.dynamic(1, seq(
-      alias($.emphasis_open_multiline, $.emphasis_delimiter),
-      optional($._last_token_punctuation),
-      $._emphasis_content_multiline,
-      alias($.emphasis_close_multiline, $.emphasis_delimiter),
-    )),
-
-    // **bold** (can span lines) — nests emphasis inside
-    strong_emphasis_multiline: $ => prec.dynamic(2, seq(
-      alias($.emphasis_open_multiline, $.emphasis_delimiter),
-      $.emphasis_multiline,
-      alias($.emphasis_close_multiline, $.emphasis_delimiter),
-    )),
-
-    // Multi-line — allows newlines
-    _emphasis_content_multiline: $ => repeat1(choice(
-      $.inline_code,
-      $.interpolated_variable,
-      $.variable,
-      /[^$*\/`\n\r]+/,
-      seq('/', optional($._last_token_punctuation)),
-      '$',
-      '`',
-      seq(/\r?\n/, optional($._last_token_whitespace)),
-    )),
-
-    // `inline code`
-    inline_code: $ => token(prec(2, seq('`', /[^`\n\r]+/, '`'))),
-
-    // "quoted string"
-    // Bare $ stays literal inside quotes — only ${...} becomes a variable node.
-    string: $ => seq(
-      '"',
-      repeat(choice(
-        $.interpolated_variable,
-        /[^"$\n\r]+/,
-        '$',
-      )),
-      '"',
-    ),
-
-    // true / false
-    boolean: $ => choice('true', 'false'),
-
-    // 1.0.0, ^1.1.0, ~2.3.0, 1.0.0-beta.1-f92627f
-    version: $ => seq(
-      optional($.version_prefix),
+      $.variable_dot,
+      $.key,
+      $.version_prefix,
       $.version_digits,
       $.version_dot,
-      $.version_digits,
-      repeat(seq($.version_dot, $.version_digits)),
-      repeat(seq(
-        $.version_dash,
-        $.version_tag,
-        repeat(seq($.version_dot, choice($.version_digits, $.version_tag))),
-      )),
-    ),
+      $.version_dash,
+      $.version_tag,
+      $.number,
+      $.language_tag,
+      $.injection_delimiter,
+      $.done_marker,
+      $.list_marker,
+      $.in_progress_marker,
+      $.tilde_delimiter,
+      $.heading_marker,
+      $.fenced_code_delimiter,
+      $.fenced_code_body,
+      $.emphasis_open,
+      $.emphasis_close,
+      $.emphasis_open_multiline,
+      $.emphasis_close_multiline,
+      // Phantom tokens — never emitted by the scanner, but their presence in
+      // valid_symbols tells the scanner what preceded the current position.
+      // The grammar places optional($._last_token_whitespace) after whitespace
+      // and optional($._last_token_punctuation) after punctuation so the
+      // scanner can check valid_symbols[LAST_TOKEN_*] for context.
+      $._last_token_whitespace,
+      $._last_token_punctuation,
+      $.error_sentinel,
+   ],
 
-    // Path for imports/verify.
-    //   file/path                 — regular
-    //   ./file/path, ../file/path — relative (. or .. max)
-    //   #/aliased/path            — alias (# highlighted specially)
-    // Prefixes separate so each highlights distinctly; slashes split out as
-    // their own tokens so they colour as punctuation, not body text.
-    // Tolerates mid-typing states: bare `#`, `./`, trailing slashes, etc.
-    path: $ => choice(
-      seq($.path_alias_prefix, optional($.path_body)),
-      seq($.path_relative_prefix, optional($.path_body)),
-      $.path_body,
-    ),
+   extras: ($) => [/[ \t]/, $.comment],
 
-    path_alias_prefix: $ => '#',
-    path_relative_prefix: $ => /\.\.?/,
-    path_body: $ => choice(
-      seq('/', optional(seq($.path_segment, repeat(seq('/', optional($.path_segment)))))),
-      seq($.path_segment, repeat(seq('/', optional($.path_segment)))),
-    ),
-    path_segment: $ => /[\w@][\w\-.@]*/,
+   conflicts: ($) => [
+      [$.raw_value, $.emphasis],
+      [$.raw_value, $.strong_emphasis],
+      [$.array_raw_value, $.emphasis],
+      [$.array_raw_value, $.strong_emphasis],
+      [$._multiline_body, $.emphasis_multiline],
+      [$._multiline_body, $.strong_emphasis_multiline],
+      [$.tilde_body, $.emphasis_multiline],
+      [$.tilde_body, $.strong_emphasis_multiline],
+      [$.heading_content, $.emphasis],
+      [$.heading_content, $.strong_emphasis],
+   ],
 
-    // ─────────────────────────────────────────────
-    // Identifier - the tricky one
-    // ─────────────────────────────────────────────
-    //
-    //
-    //
-    // ────────────────────────────────
-    // Must handle:
-    //   aft:dev     → single identifier (colon between words)
-    //   name: value → identifier, then assignment operator, then value
-    //
-    // Rule: colon allowed BETWEEN word segments, never at the end.
-    // Pattern breakdown:
-    //   [a-zA-Z_]      start with letter or underscore
-    //   [\w@-]*        then word chars, @, or hyphens
-    //   (?:            optionally, one or more times:
-    //     :              a colon
-    //     [a-zA-Z_]      followed immediately by letter/underscore
-    //     [\w@-]*        then more word chars
-    //   )*
-    //
-    identifier: $ => /[a-z_][\w@-]*(?::[a-z_][\w@-]*)*/i,
-  },
+   rules: {
+      source_file: ($) => repeat(choice($._definition, '}', /\r?\n/)),
+
+      _definition: ($) =>
+         choice(
+            $.section,
+            $.verify_statement,
+            $.import_statement,
+            $.scope_block,
+            $.scope_entry,
+            $.scope_return,
+            $.assignment,
+            $.list_item,
+            $.done_item,
+            $.in_progress_item,
+            $.tilde_block,
+         ),
+
+      //
+      //
+      //
+      // ────────────────────────────────
+
+      // [WORKSPACE] or [SCRIPT_VARIABLES] aka [sv]
+      section: ($) =>
+         seq(
+            '[',
+            $.identifier,
+            ']',
+            optional(seq('aka', '[', $.identifier, ']')),
+         ),
+
+      // OUTPUT::{ ... }
+      scope_block: ($) =>
+         seq(
+            field('name', $.identifier),
+            '::',
+            '{',
+            repeat(choice($._definition, /\r?\n/)),
+            '}',
+         ),
+
+      // server:: (entering nested scope)
+      scope_entry: ($) => seq(field('name', $.identifier), '::'),
+
+      // :: (back to section root)
+      scope_return: ($) => '::',
+
+      //
+      //
+      //
+      // ────────────────────────────────
+
+      // verify ombre::{ PNPM_CATALOGS, PNPM_SETTINGS }
+      // Brace list may wrap across lines:
+      //   verify ombre::{ Foo,
+      //            Bar, Baz }
+      verify_statement: ($) =>
+         prec.right(
+            seq(
+               'verify',
+               $.path,
+               optional(
+                  seq(
+                     '::',
+                     optional(
+                        seq(
+                           '{',
+                           commaSepMultiline($.identifier),
+                           optional('}'),
+                        ),
+                     ),
+                  ),
+               ),
+            ),
+         ),
+
+      // import vite::{defineConfig}
+      // Brace list may wrap across lines (see verify_statement).
+      import_statement: ($) =>
+         prec.right(
+            seq(
+               'import',
+               $.path,
+               optional(
+                  seq(
+                     '::',
+                     optional(
+                        seq(
+                           '{',
+                           commaSepMultiline($.identifier),
+                           optional('}'),
+                        ),
+                     ),
+                  ),
+               ),
+            ),
+         ),
+
+      // name: orlaya  OR  catalogs: (value optional for list headers)
+      // prec.right = prefer to grab the value when there's ambiguity
+      assignment: ($) =>
+         prec.right(
+            seq(field('key', $.key), ':', optional(field('value', $._value))),
+         ),
+
+      // -- coreWorkspace
+      list_item: ($) => seq($.list_marker, $._value),
+
+      // xx done!
+      done_item: ($) => seq($.done_marker, $._value),
+
+      // == in progress
+      in_progress_item: ($) => seq($.in_progress_marker, $._value),
+
+      // // comment text
+      comment: ($) => seq('//', /.*/),
+
+      //
+      //
+      //
+      // ────────────────────────────────
+
+      multiline_fold: ($) =>
+         seq($.fold_open, optional($.fold_body), $.fold_close),
+
+      fold_body: ($) => $._multiline_body,
+
+      multiline_preserve: ($) =>
+         seq(
+            $.preserve_delimiter,
+            optional($.preserve_body),
+            $.preserve_delimiter,
+         ),
+
+      preserve_body: ($) => $._multiline_body,
+
+      // Shared inline content for folds and preserves.
+      // No ~/#/- exclusions — those chars are plain text inside << >> and || ||.
+      _multiline_body: ($) =>
+         seq(
+            optional($._last_token_whitespace),
+            repeat1(
+               choice(
+                  $.fenced_code_block,
+                  $.strong_emphasis_multiline,
+                  $.emphasis_multiline,
+                  $.inline_code,
+                  $.interpolated_variable,
+                  $.variable,
+                  /[^$*\/`\n\r]+/,
+                  seq('/', optional($._last_token_punctuation)),
+                  '$',
+                  $.emphasis_open_multiline,
+                  '*',
+                  '`',
+                  seq(/\r?\n/, optional($._last_token_whitespace)),
+               ),
+            ),
+         ),
+
+      // ~~~ rich text block ~~~
+      // Excludes ~ and # from text regex — they have dedicated scanner tokens
+      // (tilde_delimiter, heading_marker) that need first crack at them.
+      tilde_block: ($) =>
+         seq(
+            $.tilde_delimiter,
+            /\r?\n/,
+            optional($.tilde_body),
+            $.tilde_delimiter,
+         ),
+
+      tilde_body: ($) =>
+         seq(
+            optional($._last_token_whitespace),
+            repeat1(
+               choice(
+                  $.heading,
+                  $.fenced_code_block,
+                  $.list_item,
+                  $.done_item,
+                  $.in_progress_item,
+                  $.strong_emphasis_multiline,
+                  $.emphasis_multiline,
+                  $.inline_code,
+                  $.interpolated_variable,
+                  $.variable,
+                  /[^$*\/`\n\r~#]+/,
+                  seq('/', optional($._last_token_punctuation)),
+                  '$',
+                  $.emphasis_open_multiline,
+                  '*',
+                  '`',
+                  '~',
+                  '#',
+                  seq(/\r?\n/, optional($._last_token_whitespace)),
+               ),
+            ),
+         ),
+
+      // # Heading through ###### Heading — only inside tilde blocks, at column 0
+      // prec.dynamic(3) so emphasis inside headings wins over tilde_body's
+      // multiline emphasis (which sits at prec.dynamic 1/2)
+      heading: ($) =>
+         prec.dynamic(
+            3,
+            prec.right(seq($.heading_marker, optional($.heading_content))),
+         ),
+
+      heading_content: ($) =>
+         prec.right(
+            repeat1(
+               choice(
+                  $.strong_emphasis,
+                  $.emphasis,
+                  $.inline_code,
+                  $.interpolated_variable,
+                  $.variable,
+                  /[^$*\/`\n\r]+/,
+                  seq('/', optional($._last_token_punctuation)),
+                  '$',
+                  $.emphasis_open,
+                  '*',
+                  '`',
+               ),
+            ),
+         ),
+
+      // ```ts ... ``` — fenced code block, only inside tilde blocks
+      // Body is opaque for language injection. Language tag is optional.
+      fenced_code_block: ($) =>
+         seq(
+            $.fenced_code_delimiter,
+            optional($.fenced_code_language),
+            /\r?\n/,
+            optional($.fenced_code_body),
+            $.fenced_code_delimiter,
+         ),
+
+      fenced_code_language: ($) => /[a-zA-Z]\w*/,
+
+      _value: ($) =>
+         choice(
+            seq($.language_tag, $.injection_delimiter, $._injectable_value),
+            $._injectable_value,
+         ),
+
+      _injectable_value: ($) =>
+         choice(
+            $.multiline_fold,
+            $.multiline_preserve,
+            $.array,
+            $.string,
+            $.boolean,
+            $.version,
+            $.number,
+            prec(-1, $.raw_value),
+         ),
+
+      array: ($) => prec(1, seq('[', commaSep($._array_value), ']')),
+
+      _array_value: ($) =>
+         choice(
+            seq(
+               $.language_tag,
+               $.injection_delimiter,
+               $._injectable_array_value,
+            ),
+            $._injectable_array_value,
+         ),
+
+      _injectable_array_value: ($) =>
+         choice(
+            $.array,
+            $.string,
+            $.boolean,
+            $.version,
+            $.number,
+            $.array_raw_value,
+         ),
+
+      // Excludes , [ ] from text regex — array delimiters.
+      array_raw_value: ($) =>
+         prec(
+            -1,
+            seq(
+               optional($._last_token_whitespace),
+               repeat1(
+                  choice(
+                     $.strong_emphasis,
+                     $.emphasis,
+                     $.inline_code,
+                     $.interpolated_variable,
+                     $.variable,
+                     /[^,$*\/~`\n\r\[\]]+/,
+                     seq('/', optional($._last_token_punctuation)),
+                     '$',
+                     $.emphasis_open,
+                     '*',
+                     '~',
+                     '`',
+                  ),
+               ),
+            ),
+         ),
+
+      variable: ($) => seq($.variable_dollar, $._variable_path),
+
+      interpolated_variable: ($) =>
+         seq($.interpolation_dollar, '{', $._variable_path, '}'),
+
+      _variable_path: ($) =>
+         seq(
+            repeat(seq($.variable_qualifier, $.variable_dot)),
+            $.variable_segment,
+         ),
+
+      // First choice excludes space/tab/[ so it stops at word boundary and
+      // doesn't eat array opens. Repeat allows spaces for multi-word values.
+      // Repeat regex matches tilde_body's regex exactly (excludes ~ #) so
+      // tree-sitter merges them into one lexer terminal — without this,
+      // tilde_body's regex wins and raw_value truncates after one word.
+      raw_value: ($) =>
+         prec.right(
+            seq(
+               optional($._last_token_whitespace),
+               choice(
+                  $.strong_emphasis,
+                  $.emphasis,
+                  $.inline_code,
+                  $.interpolated_variable,
+                  $.variable,
+                  /[^ \t"$*\/~`\n\r\[]+/,
+                  seq('/', optional($._last_token_punctuation)),
+                  '$',
+                  $.emphasis_open,
+                  '*',
+                  '~',
+                  '`',
+               ),
+               repeat(
+                  choice(
+                     $.strong_emphasis,
+                     $.emphasis,
+                     $.inline_code,
+                     $.interpolated_variable,
+                     $.variable,
+                     /[^$*\/`\n\r~#]+/,
+                     seq('/', optional($._last_token_punctuation)),
+                     '$',
+                     $.emphasis_open,
+                     '*',
+                     '~',
+                     '`',
+                     '#',
+                  ),
+               ),
+            ),
+         ),
+
+      // ── Single-line emphasis (raw_value, array_raw_value) ──
+
+      // *italic*
+      emphasis: ($) =>
+         prec.dynamic(
+            1,
+            seq(
+               alias($.emphasis_open, $.emphasis_delimiter),
+               optional($._last_token_punctuation),
+               $._emphasis_content,
+               alias($.emphasis_close, $.emphasis_delimiter),
+            ),
+         ),
+
+      // **bold** — nests emphasis inside, so **text* degrades to italic
+      strong_emphasis: ($) =>
+         prec.dynamic(
+            2,
+            seq(
+               alias($.emphasis_open, $.emphasis_delimiter),
+               $.emphasis,
+               alias($.emphasis_close, $.emphasis_delimiter),
+            ),
+         ),
+
+      // Single-line only — no newlines allowed
+      _emphasis_content: ($) =>
+         repeat1(
+            choice(
+               $.inline_code,
+               $.interpolated_variable,
+               $.variable,
+               /[^$*\/`\n\r]+/,
+               seq('/', optional($._last_token_punctuation)),
+               '$',
+               '`',
+            ),
+         ),
+
+      // ── Multi-line emphasis (fold_body, preserve_body, tilde_body) ──
+
+      // *italic* (can span lines)
+      emphasis_multiline: ($) =>
+         prec.dynamic(
+            1,
+            seq(
+               alias($.emphasis_open_multiline, $.emphasis_delimiter),
+               optional($._last_token_punctuation),
+               $._emphasis_content_multiline,
+               alias($.emphasis_close_multiline, $.emphasis_delimiter),
+            ),
+         ),
+
+      // **bold** (can span lines) — nests emphasis inside
+      strong_emphasis_multiline: ($) =>
+         prec.dynamic(
+            2,
+            seq(
+               alias($.emphasis_open_multiline, $.emphasis_delimiter),
+               $.emphasis_multiline,
+               alias($.emphasis_close_multiline, $.emphasis_delimiter),
+            ),
+         ),
+
+      // Multi-line — allows newlines
+      _emphasis_content_multiline: ($) =>
+         repeat1(
+            choice(
+               $.inline_code,
+               $.interpolated_variable,
+               $.variable,
+               /[^$*\/`\n\r]+/,
+               seq('/', optional($._last_token_punctuation)),
+               '$',
+               '`',
+               seq(/\r?\n/, optional($._last_token_whitespace)),
+            ),
+         ),
+
+      // `inline code`
+      inline_code: ($) => token(prec(2, seq('`', /[^`\n\r]+/, '`'))),
+
+      // "quoted string"
+      // Bare $ stays literal inside quotes — only ${...} becomes a variable node.
+      string: ($) =>
+         seq(
+            '"',
+            repeat(choice($.interpolated_variable, /[^"$\n\r]+/, '$')),
+            '"',
+         ),
+
+      // true / false
+      boolean: ($) => choice('true', 'false'),
+
+      // 1.0.0, ^1.1.0, ~2.3.0, 1.0.0-beta.1-f92627f
+      version: ($) =>
+         seq(
+            optional($.version_prefix),
+            $.version_digits,
+            $.version_dot,
+            $.version_digits,
+            repeat(seq($.version_dot, $.version_digits)),
+            repeat(
+               seq(
+                  $.version_dash,
+                  $.version_tag,
+                  repeat(
+                     seq(
+                        $.version_dot,
+                        choice($.version_digits, $.version_tag),
+                     ),
+                  ),
+               ),
+            ),
+         ),
+
+      // Path for imports/verify.
+      //   file/path                 — regular
+      //   ./file/path, ../file/path — relative (. or .. max)
+      //   #/aliased/path            — alias (# highlighted specially)
+      // Prefixes separate so each highlights distinctly; slashes split out as
+      // their own tokens so they colour as punctuation, not body text.
+      // Tolerates mid-typing states: bare `#`, `./`, trailing slashes, etc.
+      path: ($) =>
+         choice(
+            seq($.path_alias_prefix, optional($.path_body)),
+            seq($.path_relative_prefix, optional($.path_body)),
+            $.path_body,
+         ),
+
+      path_alias_prefix: ($) => '#',
+      path_relative_prefix: ($) => /\.\.?/,
+      path_body: ($) =>
+         choice(
+            seq(
+               '/',
+               optional(
+                  seq(
+                     $.path_segment,
+                     repeat(seq('/', optional($.path_segment))),
+                  ),
+               ),
+            ),
+            seq($.path_segment, repeat(seq('/', optional($.path_segment)))),
+         ),
+      path_segment: ($) => /[\w@][\w\-.@]*/,
+
+      // ─────────────────────────────────────────────
+      // Identifier - the tricky one
+      // ─────────────────────────────────────────────
+      //
+      //
+      //
+      // ────────────────────────────────
+      // Must handle:
+      //   aft:dev     → single identifier (colon between words)
+      //   name: value → identifier, then assignment operator, then value
+      //
+      // Rule: colon allowed BETWEEN word segments, never at the end.
+      // Pattern breakdown:
+      //   [a-zA-Z_]      start with letter or underscore
+      //   [\w@-]*        then word chars, @, or hyphens
+      //   (?:            optionally, one or more times:
+      //     :              a colon
+      //     [a-zA-Z_]      followed immediately by letter/underscore
+      //     [\w@-]*        then more word chars
+      //   )*
+      //
+      identifier: ($) => /[a-z_][\w@-]*(?::[a-z_][\w@-]*)*/i,
+   },
 })
 
 /**
@@ -512,7 +595,7 @@ export default grammar({
  * Custom Funtion -- jsdoc needed to appease ts check
  */
 function commaSep(rule) {
-  return optional(seq(rule, repeat(seq(',', rule))))
+   return optional(seq(rule, repeat(seq(',', rule))))
 }
 
 /**
@@ -521,12 +604,14 @@ function commaSep(rule) {
  * for braced lists in import/verify that may wrap across multiple lines.
  */
 function commaSepMultiline(rule) {
-  const NL = /\r?\n/
-  return optional(seq(
-    optional(NL),
-    rule,
-    repeat(seq(optional(NL), ',', optional(NL), rule)),
-    optional(NL),
-    optional(seq(',', optional(NL))),
-  ))
+   const NL = /\r?\n/
+   return optional(
+      seq(
+         optional(NL),
+         rule,
+         repeat(seq(optional(NL), ',', optional(NL), rule)),
+         optional(NL),
+         optional(seq(',', optional(NL))),
+      ),
+   )
 }
